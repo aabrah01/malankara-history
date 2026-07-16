@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lineage of the St. Thomas Christian Churches</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1e26; --card-hover:#242a38; --text:#e8e6e1; --muted:#9a9890; --line:#4a5060;
+    --east:#c9a227;    /* East Syriac Rite */
+    --west:#3b8ea5;    /* West Syriac Rite */
+    --reform:#7a6bb5;  /* Reformed / Evangelical */
+    --mixed:#8a8f7a;   /* transitional */
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:Georgia,'Times New Roman',serif; line-height:1.55;}
+  header{max-width:1000px; margin:0 auto; padding:44px 24px 8px; text-align:center;}
+  header h1{font-size:1.9rem; margin-bottom:8px;}
+  header .sub{color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.92rem; max-width:720px; margin:0 auto;}
+  header a{color:#8fb6e8;}
+  .navlink{display:inline-block; margin-top:12px; font-family:Helvetica,Arial,sans-serif; font-size:.85rem; background:var(--card); border:1px solid var(--line); padding:7px 16px; border-radius:20px; text-decoration:none;}
+  .navlink:hover{background:var(--card-hover);}
+  .legend{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:22px auto 4px; font-family:Helvetica,Arial,sans-serif; font-size:.78rem; color:var(--muted); padding:0 24px;}
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:12px; height:12px; border-radius:3px; display:inline-block;}
+  .hint{text-align:center; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.78rem; margin-top:10px;}
+
+  .treewrap{overflow-x:auto; padding:10px 20px 30px; -webkit-overflow-scrolling:touch;}
+  #scaler{transform-origin:top left;}
+  .tree{margin:0 auto; width:max-content;}
+  .fitbtn{display:block; margin:14px auto 0; background:var(--card); color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:6px 16px; font-size:.8rem; cursor:pointer; font-family:Helvetica,Arial,sans-serif;}
+  .fitbtn:hover{color:var(--text); background:var(--card-hover);}
+  .tree ul{display:flex; justify-content:center; padding-top:26px; position:relative;}
+  .tree ul::before{content:""; position:absolute; top:0; left:50%; width:2px; height:26px; background:var(--line);}
+  .tree>ul::before{display:none;}
+  .tree li{display:flex; flex-direction:column; align-items:center; position:relative; padding:26px 8px 0; list-style:none;}
+  .tree>ul>li{padding-top:0;}
+  .tree li::before, .tree li::after{content:""; position:absolute; top:0; height:2px; width:50%; background:var(--line);}
+  .tree li::before{left:0;} .tree li::after{right:0;}
+  .tree li:only-child::before, .tree li:only-child::after{display:none;}
+  .tree li:first-child::before{background:none;}
+  .tree li:last-child::after{background:none;}
+  .tree>ul>li::before, .tree>ul>li::after{display:none;}
+  .tree li>ul{margin-top:0;}
+  .tree li > .node::before{content:""; position:absolute; top:-26px; left:50%; width:2px; height:26px; background:var(--line);}
+  .tree>ul>li>.node::before{display:none;}
+
+  .node{position:relative; background:var(--card); border:1px solid var(--line); border-top-width:4px; border-radius:10px; padding:10px 14px; width:190px; cursor:pointer; text-align:center; transition:.15s; font-family:Helvetica,Arial,sans-serif;}
+  .node:hover{background:var(--card-hover); transform:translateY(-2px);}
+  .node.active{outline:2px solid #fff3; background:var(--card-hover);}
+  .node .yr{font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;}
+  .node .nm{font-family:Georgia,serif; font-size:.95rem; font-weight:600; margin:2px 0;}
+  .node .rite{font-size:.68rem; color:var(--muted);}
+  .node .badge{display:inline-block; margin-top:5px; font-size:.62rem; padding:2px 8px; border-radius:10px; background:#ffffff12; color:var(--muted); letter-spacing:.04em;}
+  .rt-east{border-top-color:var(--east);} .rt-east .yr{color:var(--east);}
+  .rt-west{border-top-color:var(--west);} .rt-west .yr{color:var(--west);}
+  .rt-reform{border-top-color:var(--reform);} .rt-reform .yr{color:var(--reform);}
+  .rt-mixed{border-top-color:var(--mixed);} .rt-mixed .yr{color:var(--mixed);}
+  .node.star .nm::after{content:" ★"; color:var(--west); font-size:.8em;}
+
+  #detail{max-width:860px; margin:8px auto 50px; padding:0 24px; display:none;}
+  #detail .panel{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--line); border-radius:12px; padding:22px 26px;}
+  #detail h2{font-size:1.25rem; margin-bottom:2px;}
+  #detail .meta{font-family:Helvetica,Arial,sans-serif; font-size:.8rem; color:var(--muted); margin-bottom:12px;}
+  #detail .meta b{color:var(--text); font-weight:600;}
+  #detail h3{font-family:Helvetica,Arial,sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin:14px 0 4px;}
+  #detail p{font-size:.94rem; margin-bottom:8px;}
+  #detail .sources ul{list-style:none;}
+  #detail .sources li{font-family:Helvetica,Arial,sans-serif; font-size:.82rem; color:var(--muted); padding-left:14px; position:relative;}
+  #detail .sources li::before{content:"▸"; position:absolute; left:0;}
+  #detail .sources a{color:#8fb6e8; text-decoration:none;}
+  #detail .sources a:hover{text-decoration:underline;}
+  #detail .close{float:right; cursor:pointer; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.8rem; border:1px solid var(--line); border-radius:14px; padding:2px 10px;}
+  footer{max-width:860px; margin:0 auto 60px; padding:0 24px; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.8rem;}
+  footer a{color:#8fb6e8;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lineage of the St. Thomas Christian Churches</h1>
+  <p class="sub">One apostolic community — many branches. This family tree follows the Wikipedia chart
+  <a href="https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church#/media/File:Branches_%26_Denominations_of_Saint_Thomas_Christians.svg" target="_blank" rel="noopener">“Branches &amp; Denominations of Saint Thomas Christians”</a>,
+  showing where each church began, when, and why it separated. Colors indicate the liturgical rite each branch uses. Click any node for the full story of its split.</p>
+  <a class="navlink" href="index.html">← Back to the interactive timeline</a>
+</header>
+
+<div class="legend">
+  <span><i style="background:var(--east)"></i> East Syriac Rite</span>
+  <span><i style="background:var(--west)"></i> West Syriac Rite</span>
+  <span><i style="background:var(--reform)"></i> Reformed / Evangelical liturgy</span>
+  <span><i style="background:var(--mixed)"></i> Transitional (East → West Syriac)</span>
+  <span>★ = the Malankara Orthodox Syrian Church line</span>
+</div>
+<button class="fitbtn" id="fitToggle">View at full size</button>
+<p class="hint">Click a box to read why that branch formed</p>
+
+<div class="treewrap"><div id="scaler"><div class="tree">
+<ul>
+ <li>
+  <div class="node rt-east" data-id="root"><div class="yr">AD 52</div><div class="nm">Saint Thomas Christians</div><div class="rite">East Syriac Rite · Church of the East communion</div><div class="badge">The undivided church</div></div>
+  <ul>
+   <li>
+    <div class="node rt-east" data-id="diamper"><div class="yr">1599–1653</div><div class="nm">Under Portuguese / Latin rule</div><div class="rite">East Syriac Rite, forcibly Latinized</div><div class="badge">Synod of Diamper</div></div>
+    <ul>
+     <li>
+      <div class="node rt-east" data-id="pazhayakur"><div class="yr">1653</div><div class="nm">Pazhayakūr (“Old Allegiance”)</div><div class="rite">East Syriac Rite</div><div class="badge">Stayed with Rome</div></div>
+      <ul>
+       <li><div class="node rt-east" data-id="syromalabar"><div class="yr">1653 / 1887 / 1923</div><div class="nm">Syro-Malabar Church</div><div class="rite">East Syriac Rite</div><div class="badge">Eastern Catholic</div></div></li>
+       <li><div class="node rt-east" data-id="chaldean"><div class="yr">1862–1907</div><div class="nm">Chaldean Syrian Church</div><div class="rite">East Syriac Rite</div><div class="badge">Assyrian Church of the East</div></div></li>
+      </ul>
+     </li>
+     <li>
+      <div class="node rt-mixed star" data-id="puthenkur"><div class="yr">1653</div><div class="nm">Puthenkūr / Malankara Church</div><div class="rite">East → West Syriac Rite (from 1665)</div><div class="badge">Coonan Cross Oath · Mar Thoma I</div></div>
+      <ul>
+       <li><div class="node rt-west" data-id="thozhiyur"><div class="yr">1772</div><div class="nm">Malabar Independent Syrian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Independent (Thozhiyur)</div></div></li>
+       <li><div class="node rt-reform" data-id="csi"><div class="yr">1836 / 1947</div><div class="nm">CSI Syrian Christians</div><div class="rite">Anglican / Reformed liturgy</div><div class="badge">Church of South India</div></div></li>
+       <li>
+        <div class="node rt-reform" data-id="marthoma"><div class="yr">1876 / 1889</div><div class="nm">Mar Thoma Syrian Church</div><div class="rite">Reformed West Syriac Rite</div><div class="badge">Reformed Oriental</div></div>
+        <ul>
+         <li><div class="node rt-reform" data-id="steci"><div class="yr">1961</div><div class="nm">St. Thomas Evangelical Church</div><div class="rite">Evangelical / Reformed</div><div class="badge">Split from Mar Thoma</div></div></li>
+        </ul>
+       </li>
+       <li><div class="node rt-west star" data-id="mosc"><div class="yr">1912 / 1934</div><div class="nm">Malankara Orthodox Syrian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Oriental Orthodox · Autocephalous</div></div></li>
+       <li><div class="node rt-west" data-id="jacobite"><div class="yr">1912 / 1975</div><div class="nm">Jacobite Syrian Christian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Under Patriarch of Antioch</div></div></li>
+       <li><div class="node rt-west" data-id="syromalankara"><div class="yr">1930</div><div class="nm">Syro-Malankara Catholic Church</div><div class="rite">West Syriac Rite</div><div class="badge">Eastern Catholic</div></div></li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+</div></div></div>
+
+<div id="detail"><div class="panel" id="panelInner"></div></div>
+
+<footer>
+  <p><b style="color:var(--text)">Sources for this page.</b> Tree structure: Wikipedia,
+  <a href="https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church#/media/File:Branches_%26_Denominations_of_Saint_Thomas_Christians.svg" target="_blank" rel="noopener">Branches &amp; Denominations of Saint Thomas Christians (chart)</a> and the article
+  <a href="https://en.wikipedia.org/wiki/Saint_Thomas_Christians" target="_blank" rel="noopener">Saint Thomas Christians</a> (sections “Colonial era” and “Divisions”). Split narratives additionally draw on the <em>Divine Ascent</em> podcast, “Indian Church History,” Parts 1–4, and per-church Wikipedia articles cited in each panel. Pentecostal and Brethren fellowships that later drew members from all these branches (from 1911 onward) are noted in the Wikipedia article but are not shown as tree nodes, following the source chart's main branches. See also the companion <a href="index.html">interactive timeline</a>.</p>
+</footer>
+
+<script>
+const DATA = {
+ root:{
+  name:"Saint Thomas Christians (the undivided church)", yr:"AD 52 – 1599", rite:"East Syriac Rite", comm:"Communion with the (Persian) Church of the East",
+  why:"Not a split — the trunk of the tree. Tradition holds that St. Thomas the Apostle arrived on the Malabar coast in AD 52 and founded seven churches. For some fifteen centuries the community remained one body: governed day-to-day by a native Archdeacon, served by visiting East Syriac bishops from Persia, and worshiping in the Syriac language of the East Syriac (Chaldean) liturgical tradition.",
+  extra:"Every church below descends from this single community — which is why all of them, Catholic, Orthodox, Reformed, and Assyrian alike, call themselves St. Thomas Christians (Nasranis).",
+  diff:"The baseline the others diverged from: worship entirely in Syriac (the East Syriac Qurbana of Addai and Mari), married parish priests, leavened bread, communion always given in both kinds together, baptism–chrismation–first communion administered together (even to infants), minimal use of images, and no notion of papal jurisdiction. Every one of these later became a fault line — the disputes below are largely arguments over which of these inherited practices could change.",
+  sources:[
+   {label:"Divine Ascent, Part 1 — “Why did he travel to India?”, “Connection with Church in Persia”"},
+   {label:"Wikipedia: Saint Thomas Christians", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+ diamper:{
+  name:"Under Portuguese / Latin rule", yr:"1599 – 1653", rite:"East Syriac Rite, forcibly Latinized", comm:"Roman Catholic Church (Padroado)",
+  why:"Why it happened: after Vasco da Gama's arrival (1498) the Portuguese controlled the ports and blocked bishops from Persia. When Mar Abraham, the last East Syriac bishop, died in 1597, Archbishop Aleixo de Menezes of Goa convened the Synod of Diamper (1599): Syriac books judged 'Nestorian' were burned or corrected, and the whole community was formally placed under the Roman Catholic Church, governed by European (largely Jesuit) bishops.",
+  extra:"This period is the pressure-cooker that produced the first great split. Enforced Latin practices — celibate clergy for new ordinands, Latin-style sacraments, statues, and the exclusion of Syriac bishops — built the resentment that exploded in 1653.",
+  diff:"Latin practice differed from the inherited tradition on nearly every point of discipline the podcast lists: celibacy required of newly ordained priests (the East had married parish clergy), communion in one kind — the host alone — with unleavened bread (the East gave leavened bread and wine together), confirmation and first communion deferred to the 'age of reason' (the East gave all three at baptism), statues and crucifixes made central to devotion (the Syriac churches used few images), and the pope held to be universal head of the church. Diamper imposed all of this on a community that had never known any of it.",
+  sources:[
+   {label:"Divine Ascent, Part 2 — “Synod of Diamper”"},
+   {label:"Wikipedia: Synod of Diamper", url:"https://en.wikipedia.org/wiki/Synod_of_Diamper"}
+  ]},
+ pazhayakur:{
+  name:"Pazhayakūr (“Old Allegiance”)", yr:"1653 – 1665", rite:"East Syriac Rite", comm:"Roman Catholic Church",
+  why:"Why it split: after the Coonan Cross Oath (Jan 3, 1653), Rome sent Carmelite missionaries who questioned the validity of Mar Thoma I's consecration by priests and, in 1663, consecrated a native bishop — Palliveettil Chandy (Alexander de Campo), Mar Thoma I's own cousin — for those willing to stay with Rome. The majority (72 of 116 churches, with 12 shared) returned to Catholic allegiance and became known as the Pazhayakūr, or Old Allegiance.",
+  extra:"They kept the East Syriac Rite the community had always used — which is why, liturgically, the 'Old Allegiance' Catholics preserved the older rite while the anti-Roman party eventually adopted a new (West Syriac) one.",
+  diff:"Against the Puthenkūr, the Pazhayakūr differ on two axes. Authority: they accept the pope as head of the church, with Roman Catholic doctrine in full — papal supremacy, purgatory, Latin sacramental discipline. Rite: they kept the East Syriac Qurbana (in Latinized form), while the Puthenkūr gradually adopted the West Syriac Liturgy of St. James and Miaphysite (Oriental Orthodox) Christology. So the two sides of the 1653 split ended up differing in both what they believe about church authority and how they worship.",
+  sources:[
+   {label:"Divine Ascent, Part 2 — “Split in Indian Church”, “Is there still Apostolic Succession?”"},
+   {label:"Wikipedia: Saint Thomas Christians — divisions", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+ syromalabar:{
+  name:"Syro-Malabar Church", yr:"Continuity from 1653; native hierarchy restored 1887 / 1923", rite:"East Syriac Rite", comm:"Eastern Catholic (in communion with Rome)",
+  why:"Why it formed: the main body of the Pazhayakūr continued under Latin (Carmelite/Propaganda) bishops for over two centuries. Repeated protests — including the Angamaly Padiyola of 1787, when 84 churches demanded their native East Syriac hierarchy back — eventually moved Rome: separate vicariates for the Syrians were created in 1887, and on 21 December 1923 a full native East Syriac Catholic hierarchy was restored with Augustine Kandathil as first Metropolitan and Head.",
+  extra:"Today it is the largest St. Thomas Christian body, a Major Archiepiscopal Church using the East Syriac Rite with Dyophysite (Chalcedonian) theology.",
+  diff:"Catholic in doctrine — papal supremacy, Chalcedonian ('two natures') Christology, Catholic Mariology and purgatory — but East Syriac in rite: the ancient Qurbana of Addai and Mari, its own calendar and vestments. That combination distinguishes it in both directions: from the Chaldean Syrian Church it shares the rite but not the pope; from the West Syriac churches (Orthodox, Jacobite, Syro-Malankara) it differs in anaphora, chant, and calendar as well as in communion. Centuries of Latinization also left practices — clerical celibacy, Latin devotions like adoration and the rosary — that the Syriac Orthodox side never adopted; recent decades have seen efforts to restore the older East Syriac forms.",
+  sources:[
+   {label:"Wikipedia: Syro-Malabar Church", url:"https://en.wikipedia.org/wiki/Syro-Malabar_Church"},
+   {label:"Wikipedia: Saint Thomas Christians — colonial era", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+ chaldean:{
+  name:"Chaldean Syrian Church", yr:"1862 – 1907 (organized)", rite:"East Syriac Rite", comm:"Archbishopric of the Assyrian Church of the East",
+  why:"Why it split: a traditionalist minority within the Pazhayakūr, weary of Latin subjugation, sought bishops of their own rite from Mesopotamia. Missions by Bishops Thomas Rokos (1861) and Elias Mellus (1864) were recalled under papal pressure, so the group turned instead to the Assyrian Patriarch: Antony Thondanatt was consecrated Metropolitan Abdisho (1862), and in 1907 Patriarch Shimun XIX consecrated Abimalek Timotheus as Metropolitan for India, permanently organizing the church based at Thrissur.",
+  extra:"The podcast notes this church as the living remnant in Kerala of the old Indo-Persian connection — the 'Church of the East' presence that predated the Portuguese.",
+  diff:"Shares the East Syriac Qurbana of Addai and Mari with the Syro-Malabar Church but rejects papal authority, holding instead the theology of the Church of the East: it does not accept the Council of Ephesus (431), honors rather than condemns Nestorius, and venerates St. Mary without the title 'Theotokos' (God-bearer), preferring 'Mother of Christ' — exactly the nuance the podcast discusses when asking whether the pre-Portuguese Indian church was 'Nestorian.' Its anaphora famously lacks an explicit institution narrative. Against the West Syriac churches it differs in rite, Christology (Dyophysite rather than Miaphysite), and communion (Assyrian Church of the East).",
+  sources:[
+   {label:"Divine Ascent, Part 1 — “What elements of Church in Persia do we still see today?”"},
+   {label:"Wikipedia: Chaldean Syrian Church", url:"https://en.wikipedia.org/wiki/Chaldean_Syrian_Church"}
+  ]},
+ puthenkur:{
+  name:"Puthenkūr / Malankara Church", yr:"1653 (Coonan Cross Oath)", rite:"East Syriac → West Syriac Rite (transition begun 1665, completed by the mid-1800s)", comm:"From 1665, growing ties with the Syriac Orthodox Church of Antioch",
+  why:"Why it split: news that Mar Ahatalla, a Syrian bishop who came in answer to the community's appeals, had been seized (and by tradition drowned) by the Portuguese ignited the Coonan Cross Oath at Mattancherry on January 3, 1653 — a mass vow never again to submit to Portuguese ecclesiastical rule. Twelve priests elevated Archdeacon Thomas as Mar Thoma I. Those who stood by him — about 32 of 116 churches — became the Puthenkūr ('New Allegiance').",
+  extra:"Liturgical turning point: in 1665 the Syriac Orthodox bishop Mar Gregorios Abdal Jaleel canonically regularized Mar Thoma I, beginning the gradual replacement of the East Syriac Rite with the West Syriac Rite and alignment with Oriental Orthodox (Miaphysite) theology — completed over the following two centuries through delegations such as Maphrian Baselios Yaldo (1685) and Baselios Shakrallah (1751). Every branch on this side of the tree except the Reformed groups worships in the West Syriac Rite to this day.",
+  diff:"Defined itself against the Latin impositions by keeping the old ways: married parish clergy, leavened bread, communion in both kinds given together, full initiation (baptism, chrismation, communion) at once, and no papal jurisdiction. What changed was the rite: through the Antiochene connection it exchanged the East Syriac Qurbana for the West Syriac Liturgy of St. James, Antiochene chant, vestments, and script, and Miaphysite ('one united incarnate nature') Christology — differing from the Pazhayakūr in rite and from Rome in doctrine, while preserving the disciplines both had inherited.",
+  sources:[
+   {label:"Divine Ascent, Part 2 — “Connan Cross Oath”, “Split in Indian Church”; Part 3 — “Relationship Between Syriac Orthodox Church and Malankara Church”"},
+   {label:"Wikipedia: Coonan Cross Oath", url:"https://en.wikipedia.org/wiki/Coonan_Cross_Oath"},
+   {label:"Wikipedia: Malankara Church", url:"https://en.wikipedia.org/wiki/Malankara_Church"}
+  ]},
+ thozhiyur:{
+  name:"Malabar Independent Syrian Church (Thozhiyur)", yr:"1772; confirmed independent by Madras High Court, 1862", rite:"West Syriac Rite", comm:"Independent; today in communion with the Mar Thoma Church and other reformed partners",
+  why:"Why it split: a dispute between the visiting Syriac Orthodox delegation and the Malankara Metropolitan Thoma VI (Dionysius I). The Syriac bishop Mar Gregorios — displeased with his treatment — consecrated the monk Kattumangattu Kurien (Abraham Mar Koorilose) as bishop in 1772 without the community's request. Rejected as leader and even imprisoned by Dionysius I, Mar Koorilose escaped north to Anjoor/Thozhiyur in the Zamorin's territory, beyond Travancore-Cochin, where his small church survived independently.",
+  extra:"Despite the rupture, its bishops rescued the Malankara succession: Mar Philoxenos consecrated Malankara Metropolitans Dionysius II (1815), Dionysius III (1817), and Dionysius IV (1825), and twice governed the Malankara Church between metropolitans — a debt the podcast warmly acknowledges.",
+  diff:"Liturgically indistinguishable from the Malankara Orthodox and Jacobite churches — the same West Syriac St. James Qurbana, the same sacramental practice, valid episcopal succession no one disputed. What sets it apart is governance and fellowship: it is fully independent (essentially a single-diocese church with one metropolitan), and in modern times it holds communion with the Reformed-leaning Mar Thoma and CSI churches rather than with the Oriental Orthodox. That ecumenical alignment — not any change in its own liturgy — is why, as the podcast explains, the Malankara Orthodox no longer share full communion with it despite deep historical gratitude.",
+  sources:[
+   {label:"Divine Ascent, Part 3 — “Malabar Independent Syrian Church”"},
+   {label:"Wikipedia: Malabar Independent Syrian Church", url:"https://en.wikipedia.org/wiki/Malabar_Independent_Syrian_Church"}
+  ]},
+ csi:{
+  name:"CSI Syrian Christians (Saint Thomas Anglicans)", yr:"1836 (separation) · 1947 (Church of South India formed)", rite:"Anglican / Reformed liturgy (Book of Common Prayer tradition)", comm:"Church of South India (united Protestant church)",
+  why:"Why it split: British CMS (Church Missionary Society) missionaries had taught at the Kottayam seminary since 1815 in a 'mission of help.' As newer missionaries pressed Protestant doctrine, Metropolitan Cheppad Mar Dionysius IV convened the Synod of Mavelikara (16 January 1836), declaring the Malankara Church would remain subject to its Syrian traditions and the Patriarch of Antioch. The CMS partnership dissolved — and the minority who favored the missionaries' Reformed ideas left with them, joining the Anglican Church as the first Reformed group from the community.",
+  extra:"In 1947 the Anglican dioceses of the region merged into the Church of South India; descendants of the 1836 group are known as CSI Syrian Christians. They abandoned the Syriac rites entirely — the only branch to do so completely.",
+  diff:"The furthest liturgically from the common trunk: worship follows the Anglican Book of Common Prayer tradition in Malayalam, not any form of the Syriac Qurbana. Theology is Protestant — no invocation of saints, no prayers for the departed, emphasis on the two dominical sacraments — and since 1947 it sits inside a united Protestant church blending Anglican, Presbyterian, Methodist, and Congregationalist streams. Where even the Mar Thoma Church kept the shape of the St. James liturgy, the CSI Syrian Christians kept only the ancestry.",
+  sources:[
+   {label:"Divine Ascent, Part 3 — “Start of CSI Church”; Part 4 — “Addressing Marthoma Reformation Comments”"},
+   {label:"Wikipedia: CSI Syrian Christians", url:"https://en.wikipedia.org/wiki/CSI_Syrian_Christians"},
+   {label:"Wikipedia: Malankara Church (Mavelikkara Padiyola)", url:"https://en.wikipedia.org/wiki/Malankara_Church"}
+  ]},
+ marthoma:{
+  name:"Mar Thoma Syrian Church", yr:"Reform party from c. 1836; separate after the Synod of Mulanthuruthy (1876) and the Royal Court verdict (12 July 1889)", rite:"Reformed West Syriac Rite (Abraham Malpan's revised Malayalam liturgy)", comm:"Independent Reformed Oriental church; in full communion with the Anglican Communion",
+  why:"Why it split: Abraham Malpan, a Syriac teacher at the seminary who embraced CMS Reformed theology, revised the liturgy — removing prayers to the saints and for the departed — and had his nephew consecrated by the Patriarch of Antioch as Mathews Mar Athanasius (returned 1843), who won government recognition as Malankara Metropolitan. Three decades of struggle between this Reform Party and the Conservative Party ended when Patriarch Peter III/IV came to India and the Synod of Mulanthuruthy (1876) repudiated the reforms. The reformers under Thomas Mar Athanasius lost the Seminary Case in the Royal Court of Travancore (1889), left the old churches, and organized as the Mar Thoma Syrian Church.",
+  extra:"Liturgically it is a middle path: the West Syriac Qurbana structure retained, in Malayalam, but purged along Protestant lines — the first vernacular liturgy among the St. Thomas Christians.",
+  diff:"A deliberate hybrid. It keeps the outward inheritance of the West Syriac rite — the structure of the St. James Qurbana, vestments, the church year, episcopal succession, married clergy — but in Abraham Malpan's reformed text: prayers to the saints and for the departed removed, no veneration of icons or relics, the Eucharist not offered as a propitiatory sacrifice, and Scripture given controlling authority over tradition. So against the Orthodox and Jacobite churches the difference is doctrinal (Reformed theology in an Oriental frame); against CSI it is liturgical (the Syriac rite retained); it is in full communion with the Anglican Communion, which no Orthodox branch is.",
+  sources:[
+   {label:"Divine Ascent, Part 3 — “Marthoma Church Formation”; Part 4 — “Addressing Marthoma Reformation Comments”"},
+   {label:"Wikipedia: Mar Thoma Syrian Church", url:"https://en.wikipedia.org/wiki/Mar_Thoma_Syrian_Church"},
+   {label:"Wikipedia: Abraham Malpan", url:"https://en.wikipedia.org/wiki/Abraham_Malpan"}
+  ]},
+ steci:{
+  name:"St. Thomas Evangelical Church of India", yr:"1961", rite:"Evangelical / Reformed worship", comm:"Independent Evangelical church",
+  why:"Why it split: a doctrinal division within the Mar Thoma Syrian Church — a party holding stricter evangelical positions (on scripture, liturgy, and practices they considered insufficiently reformed) separated in 1961 and formed the St. Thomas Evangelical Church of India.",
+  extra:"It represents the furthest point of the Reformed trajectory that began with Abraham Malpan's revisions in the 1830s.",
+  diff:"Takes the Mar Thoma reforms to their conclusion: fully evangelical doctrine and worship, with the remaining ceremonial of the St. James liturgy pared back in favor of scripture-centered, preached services. It separated precisely because it judged the Mar Thoma Church insufficiently reformed — retaining episcopal titles but rejecting the sacramental and liturgical inheritance the Mar Thoma Church had kept. That makes it the most Protestant body in the family tree while still tracing its descent to St. Thomas.",
+  sources:[
+   {label:"Wikipedia: St. Thomas Evangelical Church of India", url:"https://en.wikipedia.org/wiki/St._Thomas_Evangelical_Church_of_India"},
+   {label:"Wikipedia: Saint Thomas Christians — divisions", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+ mosc:{
+  name:"Malankara Orthodox Syrian Church (Indian Orthodox Church)", yr:"Catholicate established 1912; Constitution 1934", rite:"West Syriac Rite", comm:"Oriental Orthodox; autocephalous, headed by the Catholicos of the East & Malankara Metropolitan",
+  why:"Why it split: after Patriarch Abdullah II demanded registered letters of submission granting him spiritual and temporal authority, Malankara Metropolitan Vattasseril Geevarghese Mar Dionysius VI refused and was excommunicated (1911). His party invited the senior (deposed-by-the-Ottomans but never canonically degraded) Patriarch Abdul Masih II, who in 1912 consecrated Baselios Paulose I as Catholicos of the East on the throne of St. Thomas — restoring an ancient office and giving the Indian church the power to consecrate its own bishops and Holy Mooron. The 1934 Constitution then unified governance under the Catholicos-and-Malankara-Metropolitan with an elected association.",
+  extra:"India's Supreme Court upheld this constitutional order in 1958 (leading to reconciliation, and Patriarch Yakub III's consecration of Catholicos Augen I in 1964) and again in 1995 and 2017. This is the church whose full story the companion timeline follows. ★",
+  diff:"West Syriac Liturgy of St. James in Syriac and Malayalam; Oriental Orthodox (Miaphysite) faith: St. Mary honored as Theotokos, the saints invoked, the departed prayed for, leavened bread, communion in both kinds given together, infants fully initiated at baptism, married parish priests with monastic bishops. Doctrinally and liturgically identical to the Jacobite church — the sole difference is headship: an autocephalous Catholicos of the East in Kerala, commemorated in its liturgy, governing under the 1934 Constitution, versus the Jacobites' Patriarch of Antioch. Against the Catholic branches it rejects papal supremacy and Latin dogmas; against the Reformed branches it keeps everything they removed.",
+  sources:[
+   {label:"Divine Ascent, Part 4 — “Establishment of Catholicos of the East in India”, “Autocephaly”, “1934 Constitution”"},
+   {label:"Wikipedia: Malankara Orthodox Syrian Church", url:"https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church"},
+   {label:"Wikipedia: Schism of 1912", url:"https://en.wikipedia.org/wiki/Schism_of_1912"}
+  ]},
+ jacobite:{
+  name:"Jacobite Syrian Christian Church", yr:"Patriarch's party from 1912; own Catholicos from 1975", rite:"West Syriac Rite", comm:"Autonomous body within the Syriac Orthodox Church of Antioch (Oriental Orthodox)",
+  why:"Why it split: the same 1911–12 dispute, seen from the other side. The party loyal to Patriarch Abdullah II — led by Coorilos Paulose and then Athanasius Paulose — held that submission to the Patriarch of Antioch was the guarantee of Malankara's orthodox faith and rejected the 1912 Catholicate as invalid. After the 1958–1975 reunion collapsed (amid disputes that included Patriarch Yakub III questioning the Malankara claim to the throne of St. Thomas), the Universal Syrian Synod at Damascus deposed the Kerala Catholicos in 1975 and consecrated Baselios Paulose II as rival Catholicos for the Patriarch's faction.",
+  extra:"Liturgically identical to the Malankara Orthodox — the same West Syriac Qurbana — the division is one of authority and administration, not rite or doctrine, as the podcast stresses. Its head today bears the title Catholicos of India.",
+  diff:"Identical to the Malankara Orthodox in liturgy and doctrine — the same St. James Qurbana, the same Oriental Orthodox faith, saints, sacraments, and calendar. The visible differences are entirely about authority: the Patriarch of Antioch is commemorated as supreme head in its diptychs (the Orthodox commemorate their own Catholicos), its bishops owe canonical allegiance to Antioch, and its Holy Mooron is consecrated by the Patriarch rather than locally. As the podcast puts it, the division is about who is in charge — 'other than administration, we have most things in common' — not about what is believed or how the Qurbana is celebrated.",
+  sources:[
+   {label:"Divine Ascent, Part 4 — “Dispute with Patriarch”, “Current Relationship between Two Churches”"},
+   {label:"Wikipedia: Jacobite Syrian Christian Church", url:"https://en.wikipedia.org/wiki/Jacobite_Syrian_Christian_Church"}
+  ]},
+ syromalankara:{
+  name:"Syro-Malankara Catholic Church", yr:"20 September 1930", rite:"West Syriac Rite (Malankara Rite)", comm:"Eastern Catholic (Major Archiepiscopal Church since 2005)",
+  why:"Why it split: during the Orthodox–Patriarch factional litigation, Archbishop Geevarghese Mar Ivanios was deputed to explore Roman mediation between the two Malankara parties. Rome's terms were union under the pope — but with a landmark concession: the group could keep its West Syriac (Malankara) liturgy intact. The Malankara Church declined, recalling the Coonan Cross; Mar Ivanios, with Bishop Jacob Mar Theophilos, his Bethany monastics, and lay followers, entered communion with Rome in 1930.",
+  extra:"Unlike the Latinization of 1599, this union preserved the Syriac rite — the pattern the podcast contrasts with the Portuguese era. Trivandrum became its Metropolitan see in 1932; in 2005 its head received the title Catholicos as Major Archbishop.",
+  diff:"Worship looks almost exactly like the Malankara Orthodox — the full West Syriac St. James Qurbana, Antiochene vestments and music, largely unchanged as the condition of the 1930 union — but doctrine is Roman Catholic: papal supremacy, Chalcedonian Christology as Rome defines it, and Latin dogmas such as purgatory and the Immaculate Conception. It is the mirror image of the Syro-Malabar Church within Catholicism (same faith, different rite), and the mirror image of the Malankara Orthodox within the West Syriac world (same rite, different faith).",
+  sources:[
+   {label:"Divine Ascent, Part 4 — “Did St. Dionysius want to join Catholic Church? (Syro-Malankara Church Formation)”"},
+   {label:"Wikipedia: Syro-Malankara Catholic Church", url:"https://en.wikipedia.org/wiki/Syro-Malankara_Catholic_Church"}
+  ]}
+};
+
+const detail = document.getElementById('detail');
+const panel = document.getElementById('panelInner');
+let activeNode = null;
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+document.querySelectorAll('.node').forEach(n=>{
+  n.addEventListener('click', ()=>{
+    const d = DATA[n.dataset.id];
+    if(!d) return;
+    if(activeNode) activeNode.classList.remove('active');
+    activeNode = n; n.classList.add('active');
+    const borderColor = getComputedStyle(n).borderTopColor;
+    const srcs = d.sources.map(s=> s.url
+      ? '<li><a href="'+s.url+'" target="_blank" rel="noopener">'+esc(s.label)+'</a></li>'
+      : '<li>'+esc(s.label)+'</li>').join('');
+    panel.parentElement.style.display='block';
+    panel.style.borderLeftColor = borderColor;
+    panel.innerHTML =
+      '<span class="close" id="closeBtn">✕ close</span>'+
+      '<h2>'+esc(d.name)+'</h2>'+
+      '<div class="meta"><b>When:</b> '+esc(d.yr)+' &nbsp;·&nbsp; <b>Liturgical rite:</b> '+esc(d.rite)+' &nbsp;·&nbsp; <b>Communion:</b> '+esc(d.comm)+'</div>'+
+      '<h3>Why this branch formed</h3><p>'+esc(d.why)+'</p>'+
+      '<h3>Rite &amp; legacy</h3><p>'+esc(d.extra)+'</p>'+
+      (d.diff ? '<h3>Liturgy &amp; beliefs vs. the other churches</h3><p>'+esc(d.diff)+'</p>' : '')+
+      '<div class="sources"><h3>Sources</h3><ul>'+srcs+'</ul></div>';
+    document.getElementById('closeBtn').addEventListener('click', e=>{
+      e.stopPropagation();
+      detail.style.display='none';
+      if(activeNode){activeNode.classList.remove('active'); activeNode=null;}
+    });
+    detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+});
+
+// Fit-to-screen scaling so the whole tree (including the rightmost boxes) is always visible
+const scaler = document.getElementById('scaler');
+const treeEl = document.querySelector('.tree');
+const wrapEl = document.querySelector('.treewrap');
+const fitBtn = document.getElementById('fitToggle');
+let fitMode = true;
+function applyFit(){
+  if(fitMode){
+    const avail = wrapEl.clientWidth - 40;
+    const full = treeEl.scrollWidth;
+    const scale = Math.min(1, avail / full);
+    scaler.style.transform = 'scale('+scale+')';
+    scaler.style.width = full+'px';
+    scaler.style.height = (treeEl.offsetHeight * scale)+'px';
+    scaler.style.marginLeft = Math.max(0,(wrapEl.clientWidth - full*scale)/2 - 20)+'px';
+    fitBtn.textContent = 'View at full size';
+  } else {
+    scaler.style.transform = 'none';
+    scaler.style.width = ''; scaler.style.height = ''; scaler.style.marginLeft = '';
+    fitBtn.textContent = 'Fit to screen';
+  }
+}
+fitBtn.addEventListener('click', ()=>{ fitMode = !fitMode; applyFit(); });
+window.addEventListener('resize', ()=>{ if(fitMode) applyFit(); });
+applyFit();
+</script>
+</body>
+</html>

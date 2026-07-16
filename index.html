@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline of the Malankara Orthodox Syrian Church</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1e26; --card-hover:#212633; --text:#e8e6e1; --muted:#9a9890;
+    --line:#3a3f4b;
+    --era1:#c9a227; --era2:#c0563b; --era3:#3b8ea5; --era4:#7a6bb5; --era5:#4d9e6a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:Georgia,'Times New Roman',serif; line-height:1.6;}
+  header{max-width:900px; margin:0 auto; padding:48px 24px 12px; text-align:center;}
+  header h1{font-size:2rem; letter-spacing:.02em; margin-bottom:8px;}
+  header .sub{color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.92rem; max-width:680px; margin:0 auto 6px;}
+  header .sub a{color:#b9c6e0;}
+  .controls{max-width:900px; margin:20px auto 4px; padding:0 24px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; font-family:Helvetica,Arial,sans-serif;}
+  .controls button{background:var(--card); color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:6px 14px; font-size:.82rem; cursor:pointer; transition:.15s;}
+  .controls button:hover{color:var(--text);}
+  .controls button.active{color:#fff; border-color:transparent;}
+  .controls button[data-era="all"].active{background:#39404f;}
+  .controls button[data-era="1"].active{background:var(--era1); color:#1a1400;}
+  .controls button[data-era="2"].active{background:var(--era2);}
+  .controls button[data-era="3"].active{background:var(--era3);}
+  .controls button[data-era="4"].active{background:var(--era4);}
+  .controls button[data-era="5"].active{background:var(--era5);}
+  .searchwrap{max-width:900px; margin:10px auto 0; padding:0 24px; text-align:center;}
+  .searchwrap input{width:100%; max-width:420px; background:var(--card); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:8px 14px; font-size:.9rem; font-family:Helvetica,Arial,sans-serif;}
+  .searchwrap input:focus{outline:1px solid #5b6577;}
+  .stats{text-align:center; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.78rem; margin-top:8px;}
+  .timeline{max-width:900px; margin:28px auto 60px; padding:0 24px; position:relative;}
+  .timeline::before{content:""; position:absolute; left:144px; top:0; bottom:0; width:2px; background:var(--line);}
+  .era-header{position:relative; margin:36px 0 14px; padding-left:150px; font-family:Helvetica,Arial,sans-serif;}
+  .era-header h2{font-size:1.05rem; text-transform:uppercase; letter-spacing:.12em; font-weight:600;}
+  .era-header .range{color:var(--muted); font-size:.78rem;}
+  .event{position:relative; margin-bottom:14px; padding-left:150px; cursor:pointer;}
+  .event .year{position:absolute; left:0; top:14px; width:100px; text-align:right; font-family:Helvetica,Arial,sans-serif; font-weight:700; font-size:.95rem;}
+  .event .dot{position:absolute; left:113px; top:20px; width:16px; height:16px; border-radius:50%; border:3px solid var(--bg);}
+  .event .card{background:var(--card); border:1px solid var(--line); border-left-width:4px; border-radius:10px; padding:12px 16px; transition:background .15s;}
+  .event:hover .card{background:var(--card-hover);}
+  .event h3{font-size:1.02rem; font-weight:600;}
+  .event .teaser{color:var(--muted); font-size:.88rem; font-family:Helvetica,Arial,sans-serif; margin-top:2px;}
+  .event .details{display:none; margin-top:10px; font-size:.93rem;}
+  .event.open .details{display:block;}
+  .event .details p{margin-bottom:8px;}
+  .event .note{background:#262230; border-left:3px solid #8f7bd8; padding:6px 10px; font-size:.84rem; font-family:Helvetica,Arial,sans-serif; color:#cfc8e8; border-radius:4px; margin-bottom:8px;}
+  .event .sources{border-top:1px dashed var(--line); padding-top:8px; margin-top:6px;}
+  .event .sources .label{font-family:Helvetica,Arial,sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted);}
+  .event .sources ul{list-style:none; margin-top:4px;}
+  .event .sources li{font-size:.82rem; font-family:Helvetica,Arial,sans-serif; color:var(--muted); padding-left:14px; position:relative;}
+  .event .sources li::before{content:"▸"; position:absolute; left:0; color:#6b7280;}
+  .event .sources a{color:#8fb6e8; text-decoration:none;}
+  .event .sources a:hover{text-decoration:underline;}
+  .chev{float:right; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.8rem; transition:transform .15s;}
+  .event.open .chev{transform:rotate(90deg);}
+  .e1 .dot{background:var(--era1);} .e1 .card{border-left-color:var(--era1);} .e1 .year{color:var(--era1);}
+  .e2 .dot{background:var(--era2);} .e2 .card{border-left-color:var(--era2);} .e2 .year{color:var(--era2);}
+  .e3 .dot{background:var(--era3);} .e3 .card{border-left-color:var(--era3);} .e3 .year{color:var(--era3);}
+  .e4 .dot{background:var(--era4);} .e4 .card{border-left-color:var(--era4);} .e4 .year{color:var(--era4);}
+  .e5 .dot{background:var(--era5);} .e5 .card{border-left-color:var(--era5);} .e5 .year{color:var(--era5);}
+  footer{max-width:900px; margin:0 auto 60px; padding:0 24px; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.8rem;}
+  footer h4{color:var(--text); font-size:.85rem; margin-bottom:6px;}
+  footer a{color:#8fb6e8;}
+  .expandall{margin-top:6px;}
+  @media(max-width:640px){
+    .timeline::before{left:40px;}
+    .event{padding-left:44px;}
+    .event .year{position:static; text-align:left; width:auto; margin-bottom:2px; display:block;}
+    .event .dot{left:9px;}
+    .era-header{padding-left:44px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>The Malankara Orthodox Syrian Church</h1>
+  <p class="sub">An interactive timeline of nearly 2,000 years of St. Thomas Christianity in Kerala, India — compiled from the <em>Divine Ascent</em> podcast series “Indian Church History” (Parts 1–4, hosted by Vivek Mathew with Rev. Fr. Christopher Mathew) and cross-checked against published sources. Click any event to expand its details and sources.</p>
+  <p class="sub" style="margin-top:10px;"><a href="malankara_church_lineage.html" style="display:inline-block;background:var(--card);border:1px solid var(--line);padding:7px 16px;border-radius:20px;text-decoration:none;">Church lineage &amp; branches →</a></p>
+</header>
+
+<div class="controls" id="eraFilters">
+  <button data-era="all" class="active">All Eras</button>
+  <button data-era="1">Apostolic &amp; Persian Era</button>
+  <button data-era="2">Portuguese Era</button>
+  <button data-era="3">Independence &amp; West Syriac Era</button>
+  <button data-era="4">British &amp; Reform Era</button>
+  <button data-era="5">Catholicate &amp; Modern Era</button>
+</div>
+<div class="searchwrap">
+  <input id="search" type="text" placeholder="Search events (e.g., Coonan Cross, seminary, patriarch)…">
+  <div class="stats"><span id="count"></span> · <a href="#" id="toggleAll" style="color:#8fb6e8;">Expand all</a></div>
+</div>
+
+<div class="timeline" id="timeline"></div>
+
+<footer>
+  <h4>About this timeline &amp; sources</h4>
+  <p>Primary source: <em>Divine Ascent</em> podcast, “Indian Church History,” Parts 1–4 (cited per event as “Divine Ascent, Part N” with the episode chapter). Dates and names were verified against published references, cited per event, including
+  <a href="https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church">Wikipedia: Malankara Orthodox Syrian Church</a>,
+  <a href="https://mosc.in/the_church/hisrory/20th-century/">mosc.in (official church history)</a>,
+  <a href="https://orthodoxwiki.org/Timeline_of_Oriental_Orthodoxy_in_India_(St._Thomas_Christianity)">OrthodoxWiki timeline</a>, and others.
+  Where the podcast and published sources differ, a purple note flags the discrepancy. Events before the 16th century rest largely on church tradition and early textual witnesses; they are presented as the tradition holds them, with that caveat.</p>
+</footer>
+
+<script>
+const EVENTS = [
+ // ————— ERA 1: Apostolic & Persian Era —————
+ {era:1, year:"1st c.", sort:40, title:"Why Kerala? The spice crossroads",
+  teaser:"Roman-era trade and a Jewish diaspora made Malabar both reachable and receptive.",
+  details:"Kerala was no remote frontier in the first century: pepper and spices drew regular monsoon shipping between the Roman world and Malabar ports such as Muziris (near Kodungallur), so a traveler from the Holy Land could book passage on an established sea lane. A Jewish merchant community was already settled around Kochi — and the apostolic pattern recorded in Acts was to preach to the Jewish diaspora of a place first. The podcast stresses both points: Syriac tradition says Christ arranged Thomas's passage with a merchant on the India trade, and the Kochi Jewish community gave him a natural first audience before he turned to the Hindu population. Nearly every later arrival on this timeline — Knanaya migrants, Persian bishops, Portuguese, Dutch, and British — came riding the same spice-trade currents.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Why did he travel to India?” & “Jewish Community in India”"},
+    {label:"Wikipedia: Muziris", url:"https://en.wikipedia.org/wiki/Muziris"},
+    {label:"Wikipedia: Cochin Jews", url:"https://en.wikipedia.org/wiki/Cochin_Jews"}
+  ]},
+ {era:1, year:"AD 52", sort:52, title:"St. Thomas the Apostle arrives on the Malabar Coast",
+  teaser:"Tradition: the apostle lands near Kodungallur and founds seven churches.",
+  details:"Church tradition holds that St. Thomas, one of the Twelve, arrived in AD 52 on the Malabar (southwest) coast of India, traveling the established Rome–India spice-trade routes. He preached to the Jewish community settled around Kochi and to local Hindus, and founded seven churches — enumerated in the oral tradition of the Ramban Song — all originally dedicated to St. Mary. Early witnesses to Thomas's Indian mission include the Syriac 'Doctrine of the Apostles' (c. 250) and 4th-century fathers St. Gregory of Nazianzus and St. Ambrose of Milan.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Why did he travel to India?” & “Proof of St. Thomas in India”"},
+    {label:"Wikipedia: Malankara Orthodox Syrian Church", url:"https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church"}
+  ]},
+ {era:1, year:"AD 72", sort:72, title:"Martyrdom of St. Thomas at Mylapore",
+  teaser:"The apostle is martyred near present-day Chennai; his relics later travel to Edessa.",
+  details:"After missionary work that tradition says extended as far as China, St. Thomas was martyred in AD 72 at Mylapore, near present-day Chennai (Tamil Nadu), and buried there. His relics were later translated to Edessa (Mesopotamia); the Malankara Church still celebrates July 3 — Dukhrono — commemorating the translation of the relics. Marco Polo, visiting centuries later, recorded that Hindus and Muslims alike venerated the tomb site and took earth from it for healing.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Why did he travel to India?” & “More about proof”"},
+    {label:"Wikipedia: Thomas the Apostle", url:"https://en.wikipedia.org/wiki/Thomas_the_Apostle"}
+  ]},
+ {era:1, year:"c. 300", sort:300, title:"Metropolitan David of Basra visits India",
+  teaser:"First recorded bishop to visit the Indian church, from the Persian church.",
+  details:"Around AD 300 — before the Council of Nicaea — Persian church records note that Metropolitan David (of Basra) visited India, the first recorded episcopal visit. It marks the beginning of a documented pattern that lasted over a millennium: the church in India, lacking resident bishops of its own, was served by East Syriac bishops from Persia, with whom it shared the St. Thomas apostolic tradition and the Syriac liturgical language.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Connection with Church in Persia”"},
+    {label:"Wikipedia: David of Basra", url:"https://en.wikipedia.org/wiki/David_of_Basra"}
+  ]},
+ {era:1, year:"325", sort:325, title:"Bishop John at the Council of Nicaea",
+  teaser:"A bishop signs for “Persia and Great India” at the first ecumenical council.",
+  details:"Early conciliar records list a Bishop John representing 'Persia and Great India' at the First Council of Nicaea (325). Whatever his exact jurisdiction, the record shows that Christians far beyond the Roman Empire — including India — were understood as part of the universal church from the earliest conciliar era, connected through the church of Persia.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Proof of St. Thomas in India” & “Connection with Church in Persia”"},
+    {label:"Wikipedia: First Council of Nicaea", url:"https://en.wikipedia.org/wiki/First_Council_of_Nicaea"}
+  ]},
+ {era:1, year:"c. 345", sort:345, title:"Migration of Thomas of Cana (Knai Thoma)",
+  teaser:"Syriac Christian families migrate from Mesopotamia; origin of the Knanaya community.",
+  details:"Tradition dates to c. 345 the migration of Thomas of Cana, a Syriac merchant who led families of Christians (with clergy) from Mesopotamia/Persia to the Malabar coast — fleeing Persian persecution, or answering an appeal to strengthen a dwindling community, in the two versions the tradition preserves. Local rulers granted the newcomers land and privileges recorded on copper plates. The migration is the origin of the endogamous Knanaya community, and it reinforced the Malabar church's Syriac character and its privileged merchant status between the high and low castes. Kerala's rulers welcomed the newcomers for hard-headed reasons: trade was the kingdoms' lifeblood, and skilled Christian merchants who could deal with both high and low castes were valuable enough to be granted land, privileges, and rank by royal decree.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Thomas of Cana/Knanaya Community & Status of Christians”"},
+    {label:"Wikipedia: Thomas of Cana copper plates", url:"https://en.wikipedia.org/wiki/Thomas_of_Cana_copper_plates"}
+  ]},
+ {era:1, year:"849", sort:849, title:"Tharisapalli copper plates",
+  teaser:"A royal grant of land and privileges to the Syrian Christians of Kollam — still extant.",
+  details:"The Tharisapalli (Quilon Syrian) copper plates, dated 849, record a grant by the chieftain of Venad at Kollam of land, fiscal exemptions, and legal privileges to the Syrian Christian community and the Tharisapalli church. They are among the oldest surviving documentary evidence of the organized, royally recognized Christian community on the Malabar coast that the podcast describes.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Thomas of Cana/Knanaya Community & Status of Christians” (royal proclamations and copper plates)"},
+    {label:"Wikipedia: Tharisapalli (Quilon Syrian) copper plates", url:"https://en.wikipedia.org/wiki/Tharisapalli_plates"}
+  ]},
+ {era:1, year:"c. 883", sort:883, title:"King Alfred of England contacts the Christians of India",
+  teaser:"The Anglo-Saxon Chronicle records an embassy bearing alms to India.",
+  details:"By the 8th–9th centuries the existence of Christians in India was common knowledge across Christendom: the Anglo-Saxon Chronicle records that King Alfred the Great sent an embassy with alms for the Christians of India (c. 883), partly with an eye to the spice trade. The podcast cites this as evidence that the St. Thomas tradition was continuously believed in the West long before the Portuguese arrived.",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Why did he travel to India?” & “Proof of St. Thomas in India”"},
+    {label:"History Today: Alfred the Great's Indian Embassy", url:"https://www.historytoday.com/archive/history-matters/alfred-greats-indian-embassy"}
+  ]},
+ {era:1, year:"8th–15th c.", sort:1000, title:"East Syriac bishops from Persia administer the church",
+  teaser:"Centuries of regular contact: bishops come from the Church of the East; archdeacons govern locally.",
+  details:"From roughly the 8th century until the Portuguese blockade of the 16th, bishops of the (East Syriac) Church of the East traveled regularly to India to serve the St. Thomas Christians, who worshiped in East Syriac. Day-to-day administration rested with a native Archdeacon — a hereditary office in one priestly family — while the visiting bishops safeguarded faith and ordinations. Traces of this era survive today: the lotus-based St. Thomas Cross, East Syriac pronunciation habits in Kerala, and the very title 'Catholicos of the East.'",
+  sources:[
+    {label:"Divine Ascent, Part 1 — “Connection with Church in Persia”, “Apostolic Succession in India & East Syriac Rite”, “What elements of Church in Persia do we still see today?”"},
+    {label:"Wikipedia: Saint Thomas Christians", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+
+ // ————— ERA 2: Portuguese Era —————
+ {era:2, year:"1498", sort:1498, title:"Vasco da Gama reaches India",
+  teaser:"The Portuguese arrive by sea, bypassing the old land routes — and bring Catholic missionaries.",
+  details:"Vasco da Gama's arrival in 1498 opened a direct sea route from Europe, bypassing the Persian and Ottoman intermediaries through whom the Malabar church had always received its bishops. The Portuguese came for spices and trade dominance: buying pepper at its source instead of through Ottoman and Arab middlemen promised enormous wealth, and the popes had divided the newly opened world between the Iberian crowns — Spain to the west, Portugal to the east — charging their kings under the Padroado system to Christianize the lands they reached. So missionaries sailed with every fleet, expecting to find the fabled St. Thomas Christians and bring them under Rome. The St. Thomas Christians initially welcomed them warmly as fellow Christians; friction grew as the Portuguese found the Indians 'did not know the pope' and set about Latinizing their practice — married clergy, leavened bread, communion in both kinds, and infant communion all became points of contention.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Why did Portuguese Come to India?” & “How did Indians Receive Portuguese?”"},
+    {label:"Wikipedia: Vasco da Gama", url:"https://en.wikipedia.org/wiki/Vasco_da_Gama"}
+  ]},
+ {era:2, year:"1597", sort:1597, title:"Death of Mar Abraham, last East Syriac bishop",
+  teaser:"With his death, the Portuguese block any further bishops from Persia.",
+  details:"Mar Abraham of Angamaly, the last East Syriac (Persian) bishop of the St. Thomas Christians, died in 1597 after decades of pressure from the Portuguese to conform to Rome. After his death the Portuguese, who controlled the ports, prevented any new bishops from Persia from reaching India — leaving the community without a bishop of its own tradition and clearing the way for direct Roman rule.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Synod of Diamper” (the last Persian bishop Abraham passes away)"},
+    {label:"Wikipedia: Abraham of Angamaly", url:"https://en.wikipedia.org/wiki/Abraham_of_Angamaly"}
+  ]},
+ {era:2, year:"1599", sort:1599, title:"Synod of Diamper",
+  teaser:"Archbishop Menezes formally brings the St. Thomas Christians under Rome; Syriac books burned.",
+  details:"In June 1599, Archbishop Aleixo de Menezes of Goa convened the Synod of Diamper (Udayamperoor). Syriac texts judged 'Nestorian' were ordered burned or corrected; representatives were made to swear obedience to the pope; Latin practices — celibate clergy for new ordinands, Latin-style sacramental discipline, statues and crucifixes — were imposed. From this synod until 1653, the St. Thomas Christians were governed as part of the Roman Catholic Church, with Menezes and successor bishops touring the churches to enforce the decrees.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Synod of Diamper”"},
+    {label:"Wikipedia: Synod of Diamper", url:"https://en.wikipedia.org/wiki/Synod_of_Diamper"}
+  ]},
+
+ // ————— ERA 3: Independence & West Syriac Era —————
+ {era:3, year:"Jan 3, 1653", sort:1653, title:"The Coonan Cross Oath",
+  teaser:"At Mattancherry, the faithful swear on the ‘bent cross’ never again to submit to Portuguese rule.",
+  details:"News spread that Mar Ahatalla — a Syrian bishop who had come in answer to the community's appeals — had been seized by the Portuguese and, by tradition, drowned. On January 3, 1653, thousands gathered at the church in Mattancherry (Kochi), tied a rope to the open-air stone cross, and holding it together swore that they and their descendants would no longer submit to Portuguese (Jesuit) ecclesiastical rule but would remain faithful to the tradition handed down from St. Thomas. The cross is said to have bent under the pull — hence 'Koonan' (bent) Cross Oath. It is the defining act of independence in Malankara church history.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Connan Cross Oath”"},
+    {label:"Wikipedia: Coonan Cross Oath", url:"https://en.wikipedia.org/wiki/Coonan_Cross_Oath"}
+  ]},
+ {era:3, year:"1653", sort:1653.5, title:"Archdeacon Thomas elevated as Mar Thoma I",
+  teaser:"Twelve priests lay hands on the Archdeacon — the first native head bishop.",
+  details:"Months after the oath, with no bishop of their tradition available, twelve priests laid hands on Archdeacon Thomas and proclaimed him bishop as Mar Thoma I — the first native metropolitan of the St. Thomas Christians. The irregularity of a consecration without bishops troubled many, and Rome exploited the doubt: Carmelite missionaries won back the majority. By the 1660s roughly 84 churches had returned to Rome (the lineage of today's Syro-Malabar Catholic Church) while about 32 stood with Mar Thoma I — the lineage of the Malankara Church.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Connan Cross Oath” & “Split in Indian Church”"},
+    {label:"Wikipedia: Mar Thoma I", url:"https://en.wikipedia.org/wiki/Mar_Thoma_I"}
+  ]},
+ {era:3, year:"1663", sort:1663, title:"Dutch take Cochin; Alexander de Campo consecrated",
+  teaser:"The Dutch expel the Portuguese; Rome consecrates a native bishop for its faction.",
+  details:"The Dutch East India Company came for the same prize that had drawn the Portuguese — control of the spice trade — and in 1663 captured Cochin, expelling the Portuguese and with them the European Catholic missionaries. As a Protestant trading power, the Dutch had no interest in enforcing Rome's authority over the local church, which changed the religious balance overnight: the Portuguese naval blockade that had kept Syrian bishops out of India for decades was gone. Before leaving, the Carmelite bishop Joseph Sebastiani consecrated Alexander de Campo (Palliveettil Chandy), a cousin of Mar Thoma I from the same priestly family, as bishop for the pro-Roman faction — the first native Indian Catholic bishop, chosen to secure the people's loyalty.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Is there still Apostolic Succession?”"},
+    {label:"Wikipedia: Palliveettil Chandy", url:"https://en.wikipedia.org/wiki/Palliveettil_Chandy"}
+  ]},
+ {era:3, year:"1665", sort:1665, title:"Mar Gregorios Abdal Jaleel arrives — West Syriac ties begin",
+  teaser:"A Syriac Orthodox bishop from Jerusalem regularizes Mar Thoma I.",
+  details:"With the Portuguese blockade broken, the Syriac Orthodox (West Syriac) Church of Antioch answered the Malankara appeals: in 1665 Mar Gregorios Abdal Jaleel, bishop of Jerusalem, arrived and canonically regularized Mar Thoma I as metropolitan. From this point the Malankara Church aligned decisively with the West Syriac liturgical tradition and the Church of Antioch — the relationship that shaped (and complicated) the next three centuries. Mar Gregorios remained in India until his death and is venerated in the Malankara Church.",
+  sources:[
+    {label:"Divine Ascent, Part 2 — “Is there still Apostolic Succession?”; Part 3 — “Relationship Between Syriac Orthodox Church and Malankara Church”"},
+    {label:"Wikipedia: Gregorios Abdal Jaleel", url:"https://en.wikipedia.org/wiki/Gregorios_Abdal_Jaleel"}
+  ]},
+ {era:3, year:"1751", sort:1751, title:"Maphrian Shakrallah's delegation from Antioch",
+  teaser:"Antioch sends a senior mission to root the West Syriac Rite in Malankara — and regularize its bishops.",
+  details:"Why they came: the Malankara Church had repeatedly appealed to Antioch for bishops, and the Syriac Orthodox Patriarchate wanted to complete what Mar Gregorios had begun in 1665 — firmly establishing the West Syriac Rite among the Puthenkūr and canonically regularizing the orders of the Mar Thoma line, whose bishops were still consecrating their own successors. In 1751 Maphrian Baselios Shakrallah III arrived with Gregorios Hanna of Jerusalem and other clergy (an earlier Maphrian, Baselios Yaldo, had come in 1685). Mar Thoma V died without being reconsecrated, but by 1770 the delegation had reconsecrated Mar Thoma VI through every degree of orders as Dionysius I. The mission cemented the West Syriac liturgy in Malankara — and its friction with Dionysius I over authority produced the consecration of Kattumangattu Kurien (1764/1772) that led to the Thozhiyur church below.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Relationship Between Syriac Orthodox Church and Malankara Church” (the steady flow of bishops and rambans from Antioch)"},
+    {label:"Wikipedia: Baselios Sakralla III of Aleppo", url:"https://en.wikipedia.org/wiki/Baselios_Sakralla_III_of_Aleppo"},
+    {label:"Wikipedia: Saint Thomas Christians", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+ {era:3, year:"1772", sort:1772, title:"Origin of the Malabar Independent Syrian Church (Thozhiyur)",
+  teaser:"Mar Koorilose, consecrated without the community’s request, founds a small independent church.",
+  details:"The Syriac bishop Mar Gregorios (of the 18th-century mission), displeased with his treatment by the Malankara metropolitan, quietly consecrated his caretaker — the monk Kattumangattu Kurien Ramban — as bishop Mar Koorilose in 1772. Not accepted as leader by the Malankara community, Mar Koorilose withdrew to Thozhiyur in British Malabar, founding what became the Malabar Independent Syrian Church. Small but canonically continuous, this church later repaid the Malankara Church generously: its bishops preserved the Malankara succession at critical moments in the early 1800s.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Malabar Independent Syrian Church”"},
+    {label:"Wikipedia: Malabar Independent Syrian Church", url:"https://en.wikipedia.org/wiki/Malabar_Independent_Syrian_Church"}
+  ]},
+
+ // ————— ERA 4: British & Reform Era —————
+ {era:4, year:"1795", sort:1795, title:"Travancore and Cochin become British client states",
+  teaser:"Fearing Tipu Sultan, Kerala's kingdoms ally with the East India Company — which is why the CMS came.",
+  details:"Why the British came: the East India Company was in India for trade — spices, then territory and revenue — and Kerala's kingdoms needed protection. In 1795, facing invasion by Tipu Sultan of Mysore, the rajas of Travancore and Cochin entered tributary alliances with the Company; both states soon became client regimes with British Residents guiding their courts. The old order collapsed hard on the St. Thomas Christians, who lost their privileged military and trading roles and fell into visible poverty. Into that vacuum stepped a sympathetic British Resident, Colonel John Munro, who supported the founding of the Kottayam seminary (1815) and invited Church Missionary Society (CMS) missionaries to teach there — the 'mission of help.' The CMS thus arrived not as conquerors but as invited helpers of a Protestant-friendly colonial administration; the doctrinal pressure, and the reform split, came a generation later.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Start of Protestant Reformation in India (CMS)” (the British, the East India Company, and their missionaries)"},
+    {label:"Wikipedia: Saint Thomas Christians (1795 tributary alliances; Munro and the seminary)", url:"https://en.wikipedia.org/wiki/Saint_Thomas_Christians"}
+  ]},
+ {era:4, year:"c. 1806–11", sort:1806, title:"Syriac Bible given to Buchanan; first Malayalam translation",
+  teaser:"The Malankara Metropolitan gifts a Syriac Bible; Scripture reaches the vernacular.",
+  details:"As British influence grew, the Malankara Metropolitan gifted the church's Syriac Bible to Rev. Claudius Buchanan, and with CMS printing support the Bible was translated from Syriac into Malayalam for the first time — worship itself, however, remained in Syriac. The podcast highlights this as the good early phase of Anglican–Malankara cooperation, before doctrinal pressure began.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “Addressing Marthoma Reformation Comments”; Part 3 — “Start of Protestant Reformation in India (CMS)”"},
+    {label:"Wikipedia: Claudius Buchanan", url:"https://en.wikipedia.org/wiki/Claudius_Buchanan"}
+  ]},
+ {era:4, year:"1815", sort:1815, title:"Old Seminary founded at Kottayam",
+  teaser:"Pulikkottil Joseph Mar Dionysius II founds the Orthodox Theological Seminary with CMS help.",
+  details:"In 1815, Pulikkottil Joseph Mar Dionysius II — with land, funds, and backing arranged through British Resident Colonel John Munro, and teaching support from the Church Missionary Society (CMS) — founded the seminary at Kottayam — the 'Old Seminary' (Orthodox Theological Seminary), still functioning today. It replaced the traditional one-teacher Malpan system with systematic priestly formation, and became the seat of the Malankara Metropolitan. CMS teachers initially agreed to teach without introducing Protestant doctrine.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Start of Protestant Reformation in India (CMS)” & “Marthoma Church Formation”"},
+    {label:"Orthodox Theological Seminary, Kottayam", url:"https://en.wikipedia.org/wiki/Orthodox_Theological_Seminary,_Kottayam"}
+  ]},
+ {era:4, year:"1816–25", sort:1816, title:"Thozhiyur bishops preserve the Malankara succession",
+  teaser:"Mar Philoxenos of the Thozhiyur church leads Malankara and consecrates its metropolitans.",
+  details:"When Malankara metropolitans died without consecrated successors, Mar Philoxenos of the Malabar Independent (Thozhiyur) Church stepped in: he consecrated Mar Dionysius II (1815), governed the Malankara Church himself during the interregna (c. 1816–17), consecrated Punnathra Mar Dionysius III, and in 1825 consecrated Cheppad Mar Dionysius IV. The Malankara Church regards this small sister church's help as vital to its unbroken episcopal continuity.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Malabar Independent Syrian Church”"},
+    {label:"Wikipedia: Malabar Independent Syrian Church", url:"https://en.wikipedia.org/wiki/Malabar_Independent_Syrian_Church"}
+  ]},
+ {era:4, year:"1836", sort:1836, title:"Mavelikkara Padiyola — reform rejected",
+  teaser:"The Malankara Church thanks the CMS but refuses Protestant changes; the alliance ends.",
+  details:"As newer CMS missionaries pressed openly for Protestant-style reform (removing prayers to saints and for the departed), Metropolitan Cheppad Mar Dionysius IV convened a meeting at Mavelikkara in 1836 — with Mar Koorilose of Thozhiyur participating — which resolved that the church would not deviate from the faith and practices of the Syrian church. The CMS partnership dissolved; sympathizers of the missionaries formed the beginnings of Anglican congregations in Kerala (ancestors of the CSI), while a reform party remained inside the church around Abraham Malpan.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “Addressing Marthoma Reformation Comments”; Part 3 — “Start of CSI Church”"},
+    {label:"Wikipedia: Malankara Church (Mavelikkara Padiyola)", url:"https://en.wikipedia.org/wiki/Malankara_Church"}
+  ]},
+ {era:4, year:"c. 1836–40s", sort:1837, title:"Abraham Malpan’s reforms",
+  teaser:"The first Malayalam liturgy — translated and revised along Protestant lines.",
+  details:"Abraham Malpan, a Syriac teacher at the Kottayam seminary who embraced reform ideas, made the first Malayalam translation of the Holy Qurbana — removing invocations of the saints and prayers for the departed. Suspended by the Metropolitan for altering the faith, he engineered a bolder move: he sent his nephew, Deacon Mathews, to the Patriarch of Antioch with a letter presenting him as the community's chosen candidate. The Mar Thoma Syrian Church today traces its liturgy to Abraham Malpan's revision.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Marthoma Church Formation”"},
+    {label:"Wikipedia: Abraham Malpan", url:"https://en.wikipedia.org/wiki/Abraham_Malpan"}
+  ]},
+ {era:4, year:"1843", sort:1843, title:"Mathews Mar Athanasius returns as metropolitan",
+  teaser:"Consecrated by the Patriarch himself, the reformist bishop wins government recognition.",
+  details:"Deacon Mathews was ordained through the ranks and consecrated bishop by the Patriarch of Antioch, returning to Kerala (by 1843) as Mathews Mar Athanasius, claiming to be Malankara Metropolitan. Despite the community's protests that no one had elected him, the British-backed government recognized him as the legal authority — control of the seminary, churches, and trust funds followed. For some three decades the reform party held legal power while most of the faithful resisted; bishops sent by the Patriarch to investigate (Mar Athanasius Stephanos, Mar Koorilose) were denied legal standing.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Marthoma Church Formation”"},
+    {label:"Wikipedia: Mathews Athanasius", url:"https://en.wikipedia.org/wiki/Mathews_Athanasius"}
+  ]},
+ {era:4, year:"1865", sort:1865, title:"Pulikkottil Joseph consecrated as Mar Dionysius V",
+  teaser:"The Orthodox party sends its own candidate to the Patriarch for consecration.",
+  details:"Concluding that the government honored patriarchal consecration above all, the Orthodox party selected the priest Pulikkottil Joseph and sent him to Patriarch Peter III/IV, who consecrated him as Joseph Mar Dionysius V in 1865. The British courts at first still refused to displace Mathews Mar Athanasius — setting the stage for the Patriarch's own journey to India.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Marthoma Church Formation”"},
+    {label:"Wikipedia: Dionysious V (Pulikkottil Joseph)", url:"https://en.wikipedia.org/wiki/Dionysious_V"}
+  ]},
+ {era:4, year:"1876", sort:1876, title:"Synod of Mulanthuruthy",
+  teaser:"Patriarch Peter III/IV comes to India, deposes the reformers, and reorganizes the church.",
+  details:"Patriarch Ignatius Peter III/IV — the first Patriarch of Antioch to travel to India (arriving 1875) — convened a synod at Mulanthuruthy's Marthoman church in 1876. It declared the reforms invalid, upheld Mar Dionysius V as Malankara Metropolitan, and created the Malankara Syrian Christian Association, the elected assembly of clergy and laity that still governs the church. The Patriarch also divided Malankara into seven dioceses and consecrated six additional bishops — among them Geevarghese Mar Gregorios of Parumala, later the first canonized saint of the church. The podcast notes a cost: the Patriarch also extracted registered letters of allegiance, beginning a new assertion of Antiochene authority over Malankara. The reform party under Thomas Mar Athanasius, after losing the final court case (1889), became the separate Mar Thoma Syrian Church.",
+  sources:[
+    {label:"Divine Ascent, Part 3 — “Marthoma Church Formation”; Part 4 — “Context & Syriac Orthodox Relations”"},
+    {label:"Wikipedia: St. Thomas Orthodox Cathedral, Mulanthuruthy (site of the 1876 synod)", url:"https://en.wikipedia.org/wiki/St._Thomas_Orthodox_Cathedral,_Mulanthuruthy"},
+    {label:"mosc.in — The Orthodox Church from the 19th century", url:"https://mosc.in/the_church/hisrory/the-orthodox-from-the-19th-century/"}
+  ]},
+
+ // ————— ERA 5: Catholicate & Modern Era —————
+ {era:5, year:"1908", sort:1908, title:"Vattasseril Geevarghese consecrated bishop in Jerusalem",
+  teaser:"The future St. Dionysius of Vattasseril — architect of Malankara self-rule.",
+  details:"In 1908 the church sent two ramban-monks — Vattasseril Geevarghese and Kallasseril Paulose — to Patriarch Abdullah II, who consecrated them in Jerusalem as Geevarghese Mar Dionysius (VI) and Paulose Mar Kurilose. The Patriarch pointedly omitted the title 'Malankara Metropolitan' from Mar Dionysius's letter of authority. After Mar Dionysius V died in 1909, the association's choice of Vattasseril as Malankara Metropolitan collided with Patriarch Abdullah's demand for registered letters of submission to his authority — spiritual and temporal. Mar Dionysius refused; the Patriarch excommunicated him (1911), splitting the church into patriarchal and metropolitan parties.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “Context & Syriac Orthodox Relations”, “Patriarch Asking Submission To Him”, “Dispute with Patriarch”"},
+    {label:"Wikipedia: Geevarghese Dionysius of Vattasseril", url:"https://en.wikipedia.org/wiki/Geevarghese_Dionysius_of_Vattasseril"},
+    {label:"Wikipedia: Schism of 1912", url:"https://en.wikipedia.org/wiki/Schism_of_1912"}
+  ]},
+ {era:5, year:"1912", sort:1912, title:"Catholicate of the East established in India",
+  teaser:"The senior Patriarch Abdul Masih II consecrates Baselios Paulose I as Catholicos.",
+  details:"Mar Dionysius VI's answer to the crisis drew on Syriac history: the ancient office of Catholicos of the East — head of the church east of the Roman Empire, second only to the Patriarch — had lapsed centuries earlier. In 1912 the retired (but never deposed) Patriarch Abdul Masih II came to India and, at Niranam, consecrated Paulose Mar Ivanios as Baselios Paulose I, Catholicos of the East enthroned on the apostolic throne of St. Thomas. The letter of authority empowered the Malankara Church to consecrate its own bishops and Holy Mooron — the substance of autocephaly. The patriarchal party rejected the act, and decades of litigation followed.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “Establishment of Catholicos of the East in India” & “Autocephaly”"},
+    {label:"Wikipedia: Malankara Orthodox Syrian Church", url:"https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church"},
+    {label:"mosc.in — 20th Century", url:"https://mosc.in/the_church/hisrory/20th-century/"}
+  ]},
+ {era:5, year:"1934", sort:1934, title:"The Malankara Church Constitution",
+  teaser:"A governing document unites the offices of Catholicos and Malankara Metropolitan.",
+  details:"To replace rule-by-personality with transparent governance, the Malankara Association ratified the Church Constitution in 1934. It defines the church as the apostolic Malankara Orthodox Syrian Church founded through St. Thomas (AD 52); recognizes the Patriarch of Antioch as a spiritual (not administrative) head; vests governance in the Catholicos of the East and Malankara Metropolitan together with the elected association; and adopts the Hudaya Canon as the canonical standard. After Mar Dionysius VI's death (1934), Baselios Geevarghese II became the first to hold both offices — Catholicos and Malankara Metropolitan — in one person (formalized 1934/35).",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “1934 Constitution” & “Short Recap”"},
+    {label:"Wikipedia: Malankara Orthodox Syrian Church", url:"https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church"}
+  ]},
+ {era:5, year:"1958", sort:1958, title:"Supreme Court verdict and reconciliation",
+  teaser:"India’s Supreme Court upholds the Catholicos side; Patriarch Yakub III accepts peace.",
+  details:"After India's independence, the long litigation reached the Supreme Court, which in 1958 ruled in favor of the Catholicos faction: there is one Malankara Church, under the Malankara Metropolitan, governed by the 1934 Constitution. Patriarch Ignatius Yakub III and Catholicos Baselios Geevarghese II exchanged letters of reconciliation, reuniting the two factions after nearly five decades.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “When did Syriac Church Accept Our Autocephaly? (1958)”"},
+    {label:"mosc.in — 20th Century", url:"https://mosc.in/the_church/hisrory/20th-century/"}
+  ]},
+ {era:5, year:"1964", sort:1964, title:"Patriarch Yakub III consecrates Catholicos Baselios Augen I",
+  teaser:"The reconciliation is sealed: the Patriarch himself installs the new Catholicos.",
+  details:"When Baselios Geevarghese II died, the church — acting under the 1934 Constitution — invited Patriarch Ignatius Yakub III, who came to India and led the consecration of Baselios Augen I as Catholicos of the East and Malankara Metropolitan in 1964. The podcast presents this as the formal seal on the 1958 reconciliation: the Patriarch participating within, not above, the constitutional order of the Malankara Church.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “When did Syriac Church Accept Our Autocephaly? (1958)”"},
+    {label:"mosc.in — 20th Century", url:"https://mosc.in/the_church/hisrory/20th-century/"}
+  ]},
+ {era:5, year:"c. 1975", sort:1975, title:"Renewed split — the Jacobite faction",
+  teaser:"Disputes flare again; the Patriarch consecrates a rival Catholicos in India.",
+  details:"Unity frayed in the early 1970s amid administrative disputes — sharpened, the podcast recounts, when Patriarch Yakub III questioned the Malankara claim to the throne of St. Thomas and even St. Thomas's full apostleship. Mutual excommunications followed, and around 1975 the Patriarch consecrated a rival Catholicos (Baselios Paulose II) for the patriarchal party — today's Jacobite Syrian Christian Church (under the Catholicos of India). The Orthodox–Jacobite division persists, though later Supreme Court rulings (1995, 2017) upheld the 1934 Constitution for the administration of parish churches.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “Current Relationship between Two Churches”"},
+    {label:"Wikipedia: Jacobite Syrian Christian Church", url:"https://en.wikipedia.org/wiki/Jacobite_Syrian_Christian_Church"},
+    {label:"Scroll.in — Kerala church split explainer", url:"https://scroll.in/article/858273/a-century-old-church-dispute-in-kerala-flares-up-again-as-supreme-court-rejects-plea-on-leadership"}
+  ]},
+ {era:5, year:"1930", sort:1930.5, title:"Syro-Malankara Catholic Church forms",
+  teaser:"Mar Ivanios, sent to seek Rome as mediator, instead leads a group into communion with Rome.",
+  details:"During the factional disputes, Bishop Mar Ivanios was deputed to explore whether Rome could mediate between the two Malankara parties. Rome's answer was union under the pope — with the concession that the group could retain its Syriac (Malankara) rite. The Malankara Church declined, but Mar Ivanios, with monastics of his ashram and lay followers, entered communion with Rome (1930), founding the Syro-Malankara Catholic Church — the most recent major branch of the St. Thomas Christian family.",
+  sources:[
+    {label:"Divine Ascent, Part 4 — “Did St. Dionysius want to join Catholic Church? (Syro-Malankara Church Formation)”"},
+    {label:"Wikipedia: Syro-Malankara Catholic Church", url:"https://en.wikipedia.org/wiki/Syro-Malankara_Catholic_Church"}
+  ],
+  note:"The podcast narrates this episode without a date; the union with Rome is dated 20 September 1930 in published sources."}
+];
+
+const ERAS = {
+ 1:{name:"Apostolic & Persian Era", range:"AD 52 – 1498 · The St. Thomas mission and fifteen centuries of East Syriac connection"},
+ 2:{name:"Portuguese Era", range:"1498 – 1653 · Latinization and Roman rule"},
+ 3:{name:"Independence & West Syriac Era", range:"1653 – c. 1795 · The Coonan Cross Oath and the turn to Antioch"},
+ 4:{name:"British & Reform Era", range:"c. 1795 – 1912 · CMS missionaries, reform, and the Mar Thoma split"},
+ 5:{name:"Catholicate & Modern Era", range:"1912 – present · Autocephaly, the Constitution, and the Orthodox–Jacobite question"}
+};
+
+const tl = document.getElementById('timeline');
+let currentEra = 'all', query = '';
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+function render(){
+  tl.innerHTML='';
+  const evs = EVENTS.slice().sort((a,b)=>a.sort-b.sort).filter(e=>{
+    if(currentEra!=='all' && String(e.era)!==currentEra) return false;
+    if(query){
+      const hay=(e.year+' '+e.title+' '+e.teaser+' '+e.details).toLowerCase();
+      if(!hay.includes(query)) return false;
+    }
+    return true;
+  });
+  let lastEra=null, shown=0;
+  evs.forEach(e=>{
+    if(e.era!==lastEra){
+      lastEra=e.era;
+      const h=document.createElement('div');
+      h.className='era-header';
+      h.innerHTML='<h2 style="color:var(--era'+e.era+')">'+ERAS[e.era].name+'</h2><div class="range">'+ERAS[e.era].range+'</div>';
+      tl.appendChild(h);
+    }
+    const d=document.createElement('div');
+    d.className='event e'+e.era;
+    let srcs = e.sources.map(s=> s.url
+      ? '<li><a href="'+s.url+'" target="_blank" rel="noopener">'+esc(s.label)+'</a></li>'
+      : '<li>'+esc(s.label)+'</li>').join('');
+    d.innerHTML =
+      '<div class="year">'+esc(e.year)+'</div><div class="dot"></div>'+
+      '<div class="card"><span class="chev">▸</span><h3>'+esc(e.title)+'</h3>'+
+      '<div class="teaser">'+esc(e.teaser)+'</div>'+
+      '<div class="details">'+ (e.note?'<div class="note">Note: '+esc(e.note)+'</div>':'') +
+      '<p>'+esc(e.details)+'</p>'+
+      '<div class="sources"><span class="label">Sources</span><ul>'+srcs+'</ul></div></div></div>';
+    d.addEventListener('click', ev=>{ if(ev.target.tagName!=='A') d.classList.toggle('open'); });
+    tl.appendChild(d);
+    shown++;
+  });
+  document.getElementById('count').textContent = shown+' of '+EVENTS.length+' events';
+}
+
+document.getElementById('eraFilters').addEventListener('click', e=>{
+  if(e.target.tagName!=='BUTTON') return;
+  document.querySelectorAll('#eraFilters button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentEra = e.target.dataset.era;
+  render();
+});
+document.getElementById('search').addEventListener('input', e=>{
+  query = e.target.value.trim().toLowerCase();
+  render();
+});
+let allOpen=false;
+document.getElementById('toggleAll').addEventListener('click', e=>{
+  e.preventDefault();
+  allOpen=!allOpen;
+  document.querySelectorAll('.event').forEach(d=>d.classList.toggle('open', allOpen));
+  e.target.textContent = allOpen?'Collapse all':'Expand all';
+});
+render();
+</script>
+</body>
+</html>
