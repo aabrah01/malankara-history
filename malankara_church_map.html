@@ -45,6 +45,9 @@
   .leaflet-bar a:hover{background:var(--card-hover);}
   .leaflet-control-attribution{background:rgba(26,30,38,.8)!important; color:var(--muted)!important;}
   .leaflet-control-attribution a{color:#8fb6e8!important;}
+  .church-pin{width:18px; height:18px; line-height:18px; text-align:center; border-radius:50%; background:#e8e6e1; color:#7a1f1f; font-weight:700; font-size:13px; border:2px solid #c9a227; box-shadow:0 0 0 1px #0009;}
+  .controls label{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:.82rem; cursor:pointer;}
+  .controls label input{accent-color:var(--era1); cursor:pointer;}
 </style>
 </head>
 <body>
@@ -61,6 +64,7 @@
   <span style="color:var(--muted);font-size:.8rem;">View:</span>
   <button id="viewWorld" class="active">Whole Syriac world</button>
   <button id="viewKerala">Kerala (close-up)</button>
+  <label><input type="checkbox" id="toggleChurches" checked> ✝ Seven churches of St. Thomas</label>
 </div>
 <div class="legend">
   <span><i style="background:var(--era1)"></i> Apostolic &amp; Persian</span>
@@ -69,6 +73,7 @@
   <span><i style="background:var(--era4)"></i> British &amp; Reform</span>
   <span><i style="background:var(--era5)"></i> Catholicate &amp; Modern</span>
   <span><i style="background:var(--ctx)"></i> Context / origin</span>
+  <span><i style="background:#e8e6e1;border:2px solid var(--era1)"></i> ✝ Seven churches of St. Thomas</span>
 </div>
 
 <div id="map"></div>
@@ -211,6 +216,36 @@ LOCS.forEach(L0=>{
   m.addTo(map);
   worldGroup.push([lat,lng]);
   if(scope==='kerala') keralaGroup.push([lat,lng]);
+});
+
+// ---- The seven-and-a-half churches (Ēḻarappaḷḷikaḷ) tradition ascribes to St. Thomas ----
+// [name, lat, lng, note]
+const SEVEN = [
+ ["Kodungallur (Maliankara)", 10.2255, 76.196, "Reckoned the oldest of the seven, on the Malabar coast near where tradition places St. Thomas's landing."],
+ ["Palayur (Palayoor)", 10.598, 76.030, "Built at a Brahmin settlement near present-day Guruvayur; its church is among the most celebrated of the seven."],
+ ["Kottakkavu (North Paravur)", 10.145, 76.229, "One of the oldest churches in Kerala, in the Ernakulam district."],
+ ["Kokkamangalam", 9.732, 76.345, "Ramban Pattu recounts about a year of preaching here and some 1,600 converts; St. Thomas enshrined a cross for the community."],
+ ["Niranam", 9.361, 76.548, "Founded by tradition c. AD 54 — and, centuries later, the site where the Catholicate of the East was re-established in 1912."],
+ ["Nilackal (Chayal)", 9.372, 76.972, "An interior settlement in the Western Ghats near present-day Sabarimala; tradition counts some 1,100 baptised."],
+ ["Kollam (Quilon)", 8.884, 76.593, "A great Arabian-Sea port; the Ramban Pattu credits St. Thomas with 1,400 converts during a year's stay."],
+ ["Thiruvithamcode Arappally (the “half” church)", 8.318, 77.283, "In present-day Kanyakumari, Tamil Nadu — built on land granted by the Chera king, so counted as the 'half' church. It is claimed among the oldest surviving church structures in India."]
+];
+const churchIcon = L.divIcon({html:'<div class="church-pin">✝</div>', className:'', iconSize:[18,18], iconAnchor:[9,9], popupAnchor:[0,-9]});
+const churchesLayer = L.layerGroup();
+const arrivalSlug = 'ev-st-thomas-the-apostle-arrives-on-the-malabar-coast';
+SEVEN.forEach(c=>{
+  const [name, lat, lng, note] = c;
+  const html = '<div class="pop"><h4>✝ '+name+'</h4>'+
+    '<span class="place-note">One of the Ēḻarappaḷḷikaḷ — the seven (and a half) churches tradition ascribes to St. Thomas.</span>'+
+    '<div class="pev" style="border-top:none;">'+note+'</div>'+
+    '<div class="pev"><span class="dot" style="background:'+ERAHEX[1]+'"></span><span class="date">AD 52</span> — <a href="index.html#'+arrivalSlug+'">St. Thomas arrives &amp; founds seven churches</a></div>'+
+    '</div>';
+  L.marker([lat,lng], {icon:churchIcon}).bindPopup(html, {maxWidth:300, minWidth:220}).addTo(churchesLayer);
+  keralaGroup.push([lat,lng]); worldGroup.push([lat,lng]);
+});
+churchesLayer.addTo(map);
+document.getElementById('toggleChurches').addEventListener('change', e=>{
+  if(e.target.checked) churchesLayer.addTo(map); else map.removeLayer(churchesLayer);
 });
 
 const worldBounds  = L.latLngBounds(worldGroup).pad(0.08);
