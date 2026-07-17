@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map of the Malankara Church's History</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1e26; --card-hover:#212633; --text:#e8e6e1; --muted:#9a9890; --line:#3a3f4b;
+    --era1:#c9a227; --era2:#c0563b; --era3:#3b8ea5; --era4:#7a6bb5; --era5:#4d9e6a; --ctx:#7d8590;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:Georgia,'Times New Roman',serif; line-height:1.55;}
+  header{max-width:960px; margin:0 auto; padding:40px 24px 8px; text-align:center;}
+  header h1{font-size:1.9rem; margin-bottom:8px;}
+  header .sub{color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.9rem; max-width:720px; margin:0 auto;}
+  .navlink{display:inline-block; margin:12px 4px 0; font-family:Helvetica,Arial,sans-serif; font-size:.85rem; background:var(--card); border:1px solid var(--line); padding:7px 16px; border-radius:20px; text-decoration:none; color:var(--text);}
+  .navlink:hover{background:var(--card-hover);}
+  .controls{max-width:960px; margin:18px auto 0; padding:0 24px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; font-family:Helvetica,Arial,sans-serif;}
+  .controls button{background:var(--card); color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:6px 16px; font-size:.82rem; cursor:pointer;}
+  .controls button:hover{color:var(--text);}
+  .controls button.active{color:#fff; background:#39404f; border-color:transparent;}
+  .legend{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:14px auto 0; font-family:Helvetica,Arial,sans-serif; font-size:.76rem; color:var(--muted); padding:0 24px;}
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:11px; height:11px; border-radius:50%; display:inline-block; border:1px solid #0006;}
+  #map{max-width:1100px; height:74vh; min-height:460px; margin:16px auto 0; border:1px solid var(--line); border-radius:12px;}
+  footer{max-width:860px; margin:20px auto 60px; padding:0 24px; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:.8rem;}
+  footer a{color:#8fb6e8;}
+  /* Leaflet dark popup theming */
+  .leaflet-popup-content-wrapper{background:var(--card); color:var(--text); border:1px solid var(--line); border-radius:10px;}
+  .leaflet-popup-tip{background:var(--card); border:1px solid var(--line);}
+  .leaflet-popup-content{margin:12px 14px; font-family:Helvetica,Arial,sans-serif; font-size:.83rem; line-height:1.5; max-height:300px; overflow:auto;}
+  .leaflet-container a.leaflet-popup-close-button{color:var(--muted);}
+  .pop h4{font-family:Georgia,serif; font-size:1rem; margin-bottom:2px; color:var(--text);}
+  .pop .place-note{color:var(--muted); font-style:italic; margin-bottom:8px; display:block;}
+  .pev{padding:6px 0; border-top:1px solid var(--line);}
+  .pev:first-of-type{border-top:none;}
+  .pev .dot{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:middle;}
+  .pev .date{font-weight:700; color:var(--text);}
+  .pev a{color:#8fb6e8; text-decoration:none;}
+  .pev a:hover{text-decoration:underline;}
+  .pev .tz{display:block; color:var(--muted); margin-top:1px;}
+  .leaflet-bar a{background:var(--card); color:var(--text); border-bottom:1px solid var(--line);}
+  .leaflet-bar a:hover{background:var(--card-hover);}
+  .leaflet-control-attribution{background:rgba(26,30,38,.8)!important; color:var(--muted)!important;}
+  .leaflet-control-attribution a{color:#8fb6e8!important;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Where It Happened</h1>
+  <p class="sub">An interactive map of the events on the timeline — from the wider Syriac world that shaped the church (Antioch, Edessa, Persia) to the towns of Kerala where its history unfolded. Click any marker to see the events there and jump to them on the timeline. Marker colour marks the era of the earliest event at each place.</p>
+  <div>
+    <a class="navlink" href="index.html">← Interactive timeline</a>
+    <a class="navlink" href="malankara_church_lineage.html">Church lineage →</a>
+  </div>
+</header>
+
+<div class="controls">
+  <span style="color:var(--muted);font-size:.8rem;">View:</span>
+  <button id="viewWorld" class="active">Whole Syriac world</button>
+  <button id="viewKerala">Kerala (close-up)</button>
+</div>
+<div class="legend">
+  <span><i style="background:var(--era1)"></i> Apostolic &amp; Persian</span>
+  <span><i style="background:var(--era2)"></i> Portuguese</span>
+  <span><i style="background:var(--era3)"></i> Independence &amp; West Syriac</span>
+  <span><i style="background:var(--era4)"></i> British &amp; Reform</span>
+  <span><i style="background:var(--era5)"></i> Catholicate &amp; Modern</span>
+  <span><i style="background:var(--ctx)"></i> Context / origin</span>
+</div>
+
+<div id="map"></div>
+
+<footer>
+  <p><b style="color:var(--text)">About this map.</b> Places are drawn from the events in the companion <a href="index.html">timeline</a>; each marker's popup links back to the matching event. Ancient sites are shown at their modern locations (Edessa = Şanlıurfa, Nisibis = Nusaybin, Seleucia-Ctesiphon near Baghdad, Mylapore in Chennai). Kerala places pinpoint towns named in the record — Kodungallur, Kochi, Kottayam, Mulanthuruthy, Thozhiyur, Niranam, and others. A dashed line traces the eastward spread of Syriac Christianity along the Roman–Persian land routes and the Arabian-Sea spice lane to India; East Syriac Christianity also reached Central Asia and Tang China (the Xi'an stele, 781), beyond this frame. A few far-flung events aren't mapped — such as King Alfred's 9th-century English embassy to India. Base map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, tiles © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const ERAC = {1:'var(--era1)',2:'var(--era2)',3:'var(--era3)',4:'var(--era4)',5:'var(--era5)'};
+const ERAHEX = {1:'#c9a227',2:'#c0563b',3:'#3b8ea5',4:'#7a6bb5',5:'#4d9e6a',ctx:'#7d8590'};
+
+// [name, lat, lng, scope, contextNote, [ [date, era, title, slug, teaser], ... ] ]
+const LOCS = [
+ // ---- Wider Syriac world ----
+ ["Jerusalem", 31.78, 35.22, "world", "The Liturgy of St. James, the West Syriac Rite's Eucharistic liturgy, comes from the Jerusalem tradition.", [
+   ["1908", 5, "Vattasseril Geevarghese consecrated bishop in Jerusalem", "ev-vattasseril-geevarghese-consecrated-bishop-in-jerusalem", "The future architect of Malankara self-rule receives the episcopate."]
+ ]],
+ ["Antioch (Antakya)", 36.20, 36.16, "world", "Seat of the Syriac Orthodox Patriarchate and origin of the West Syriac Rite that the Malankara Church adopted from 1665 onward.", [
+   ["1665→", 3, "Related: Mar Gregorios Abdal Jaleel arrives", "ev-mar-gregorios-abdal-jaleel-arrives-west-syriac-ties-begin", "Antioch's bishops began the turn to the West Syriac tradition in India."]
+ ]],
+ ["Edessa (Şanlıurfa)", 37.15, 38.79, "world", "Cradle of Syriac Christianity. St. Thomas's relics were translated here from India — still commemorated on July 3.", [
+   ["after AD 72", 1, "Related: Martyrdom of St. Thomas", "ev-martyrdom-of-st-thomas-at-mylapore", "The relics' journey from India to Edessa is a major Syriac feast."]
+ ]],
+ ["Nisibis (Nusaybin)", 37.07, 41.22, "world", "When Rome closed the School of Edessa, its scholars moved here into Persia — cementing the East Syriac church's Antiochene-school theology.", [
+   ["5th c.", 1, "Related: The Syriac world splits", "ev-the-syriac-world-splits-into-east-and-west", "The school's migration hardened the East–West divide."]
+ ]],
+ ["Seleucia-Ctesiphon", 33.09, 44.58, "world", "Capital of the Persian Empire and seat of the Catholicos of the Church of the East, which declared its independence here.", [
+   ["410–451", 1, "The Syriac world splits into East and West", "ev-the-syriac-world-splits-into-east-and-west", "Persia's church organizes under its own Catholicos."],
+   ["8th–15th c.", 1, "East Syriac bishops from Persia administer the church", "ev-east-syriac-bishops-from-persia-administer-the-church", "Centuries of bishops sent from Persia to serve India."]
+ ]],
+ ["Basra", 30.51, 47.78, "world", null, [
+   ["c. 300", 1, "Metropolitan David of Basra visits India", "ev-metropolitan-david-of-basra-visits-india", "First recorded episcopal visit to the Indian church."]
+ ]],
+ ["Nicaea (İznik)", 40.43, 29.72, "world", null, [
+   ["325", 1, "Bishop John at the Council of Nicaea", "ev-bishop-john-at-the-council-of-nicaea", "A bishop signs for 'Persia and Great India' at the first ecumenical council."]
+ ]],
+ ["Goa", 15.50, 73.83, "world", "Portuguese colonial and ecclesiastical capital in India; the Archbishop of Goa governed the St. Thomas Christians and convened the Synod of Diamper.", [
+   ["1599", 2, "Related: Synod of Diamper", "ev-synod-of-diamper", "Rome's authority over the Malabar church radiated from Goa."]
+ ]],
+ ["Mylapore (Chennai)", 13.03, 80.27, "world", null, [
+   ["AD 72", 1, "Martyrdom of St. Thomas at Mylapore", "ev-martyrdom-of-st-thomas-at-mylapore", "The apostle is martyred on India's southeast coast."]
+ ]],
+
+ // ---- Kerala ----
+ ["Kodungallur (Cranganore) / Muziris", 10.23, 76.20, "kerala", "The ancient spice port where tradition places St. Thomas's landing and the seven churches.", [
+   ["1st c.", 1, "Why Kerala? The spice crossroads", "ev-why-kerala-the-spice-crossroads", "Roman-era trade and a Jewish diaspora made Malabar reachable."],
+   ["AD 52", 1, "St. Thomas the Apostle arrives on the Malabar Coast", "ev-st-thomas-the-apostle-arrives-on-the-malabar-coast", "The apostle lands and founds seven churches."],
+   ["c. 345", 1, "Migration of Thomas of Cana (Knai Thoma)", "ev-migration-of-thomas-of-cana-knai-thoma", "Syriac Christian families migrate from Mesopotamia."]
+ ]],
+ ["Kollam (Quilon)", 8.89, 76.60, "kerala", null, [
+   ["849", 1, "Tharisapalli copper plates", "ev-tharisapalli-copper-plates", "A royal grant of land and privileges to the Syrian Christians — still extant."]
+ ]],
+ ["Kozhikode (Calicut)", 11.25, 75.78, "kerala", "Seat of the Zamorin, the dominant Malabar kingdom, where Vasco da Gama first landed.", [
+   ["1498", 2, "Vasco da Gama reaches India", "ev-vasco-da-gama-reaches-india", "The Portuguese arrive by sea, bypassing the old land routes."],
+   ["1498", 2, "The Kerala the Portuguese found: rival kingdoms", "ev-the-kerala-the-portuguese-found-rival-kingdoms", "A patchwork of competing rajas, each needing trade allies."]
+ ]],
+ ["Angamaly", 10.19, 76.39, "kerala", null, [
+   ["1597", 2, "Death of Mar Abraham, last East Syriac bishop", "ev-death-of-mar-abraham-last-east-syriac-bishop", "With his death, the Portuguese block any further bishops from Persia."]
+ ]],
+ ["Udayamperoor (Diamper)", 9.93, 76.34, "kerala", null, [
+   ["1599", 2, "Synod of Diamper", "ev-synod-of-diamper", "Archbishop Menezes formally brings the St. Thomas Christians under Rome."]
+ ]],
+ ["Alangad", 10.08, 76.35, "kerala", null, [
+   ["1653", 3, "Archdeacon Thomas elevated as Mar Thoma I", "ev-archdeacon-thomas-elevated-as-mar-thoma-i", "Twelve priests lay hands on the Archdeacon — the first native head bishop."]
+ ]],
+ ["Kochi / Mattancherry", 9.96, 76.26, "kerala", "The harbour city and site of the open-air stone cross of the Coonan Cross Oath; long the entry point for foreign clergy and powers.", [
+   ["Jan 3, 1653", 3, "The Coonan Cross Oath", "ev-the-coonan-cross-oath", "The faithful swear never again to submit to Portuguese rule."],
+   ["1663", 3, "Dutch take Cochin; Alexander de Campo consecrated", "ev-dutch-take-cochin-alexander-de-campo-consecrated", "The Dutch expel the Portuguese; the blockade on Syrian bishops ends."],
+   ["1665", 3, "Mar Gregorios Abdal Jaleel arrives — West Syriac ties begin", "ev-mar-gregorios-abdal-jaleel-arrives-west-syriac-ties-begin", "A Syriac Orthodox bishop regularizes Mar Thoma I."],
+   ["1751", 3, "Maphrian Shakrallah's delegation from Antioch", "ev-maphrian-shakrallah-s-delegation-from-antioch", "Antioch roots the West Syriac Rite in Malankara."]
+ ]],
+ ["Mulanthuruthy", 9.89, 76.42, "kerala", null, [
+   ["1876", 4, "Synod of Mulanthuruthy", "ev-synod-of-mulanthuruthy", "Patriarch Peter III reorganizes the church and deposes the reformers."]
+ ]],
+ ["Thozhiyur", 10.66, 76.07, "kerala", "Home of the Malabar Independent Syrian Church, beyond the reach of the Travancore and Cochin rulers.", [
+   ["1772", 3, "Origin of the Malabar Independent Syrian Church", "ev-origin-of-the-malabar-independent-syrian-church-thozhiyur", "A cleric out of favour founds a small independent church."],
+   ["1816–25", 4, "Thozhiyur bishops preserve the Malankara succession", "ev-thozhiyur-bishops-preserve-the-malankara-succession", "Its bishops rescue the Malankara line at critical moments."]
+ ]],
+ ["Kottayam", 9.59, 76.52, "kerala", "Home of the Old Seminary (1815) and, for over a century, the seat of the Malankara Metropolitan — so many of the church's decisive events cluster here.", [
+   ["c. 1806–11", 4, "Syriac Bible given to Buchanan; first Malayalam translation", "ev-syriac-bible-given-to-buchanan-first-malayalam-translation", "Scripture reaches the vernacular."],
+   ["1815", 4, "Old Seminary founded at Kottayam", "ev-old-seminary-founded-at-kottayam", "Systematic priestly formation begins, with CMS help."],
+   ["1843", 4, "Mathews Mar Athanasius returns as metropolitan", "ev-mathews-mar-athanasius-returns-as-metropolitan", "The reformist bishop wins government recognition."],
+   ["1865", 4, "Pulikkottil Joseph consecrated as Mar Dionysius V", "ev-pulikkottil-joseph-consecrated-as-mar-dionysius-v", "The Orthodox party sends its own candidate to the Patriarch."],
+   ["1934", 5, "The Malankara Church Constitution", "ev-the-malankara-church-constitution", "A governing document unites the offices of Catholicos and Metropolitan."],
+   ["1958", 5, "Supreme Court verdict and reconciliation", "ev-supreme-court-verdict-and-reconciliation", "India's Supreme Court upholds the Catholicos side."],
+   ["1964", 5, "Patriarch Yakub III consecrates Catholicos Baselios Augen I", "ev-patriarch-yakub-iii-consecrates-catholicos-baselios-augen-i", "The reconciliation is sealed in person."],
+   ["c. 1975", 5, "Renewed split — the Jacobite faction", "ev-renewed-split-the-jacobite-faction", "Disputes flare again; a rival Catholicos is consecrated."]
+ ]],
+ ["Mavelikkara", 9.26, 76.55, "kerala", null, [
+   ["1836", 4, "Mavelikkara Padiyola — reform rejected", "ev-mavelikkara-padiyola-reform-rejected", "The church thanks the CMS but refuses Protestant changes."]
+ ]],
+ ["Maramon", 9.32, 76.71, "kerala", null, [
+   ["c. 1836–40s", 4, "Abraham Malpan's reforms", "ev-abraham-malpan-s-reforms", "The first Malayalam liturgy — revised along Protestant lines."]
+ ]],
+ ["Niranam", 9.36, 76.55, "kerala", "One of the traditional seven churches of St. Thomas, and site of the 1912 consecration.", [
+   ["1912", 5, "Catholicate of the East established in India", "ev-catholicate-of-the-east-established-in-india", "Baselios Paulose I enthroned as Catholicos of the East."]
+ ]],
+ ["Thiruvalla", 9.38, 76.57, "kerala", null, [
+   ["1930", 5, "Syro-Malankara Catholic Church forms", "ev-syro-malankara-catholic-church-forms", "Mar Ivanios leads a group into communion with Rome."]
+ ]],
+ ["Thiruvananthapuram (Travancore)", 8.52, 76.94, "kerala", "Capital of Travancore, whose British Resident-and-Diwan John Munro reshaped the church's institutions.", [
+   ["1795", 4, "Travancore and Cochin become British client states", "ev-travancore-and-cochin-become-british-client-states", "The alliance that brought the CMS missionaries to Kerala."]
+ ]]
+];
+
+const map = L.map('map', {scrollWheelZoom:true, worldCopyJump:true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution:'&copy; OpenStreetMap contributors &copy; CARTO', subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+// Dashed route: eastward spread of Syriac Christianity to India
+const route = [[31.78,35.22],[37.15,38.79],[33.09,44.58],[30.51,47.78],[13.03,80.27],[10.23,76.20]];
+L.polyline(route, {color:'#8fb6e8', weight:1.5, opacity:.35, dashArray:'6,7'}).addTo(map);
+
+function popupHTML(name, note, items){
+  let h = '<div class="pop"><h4>'+name+'</h4>';
+  if(note) h += '<span class="place-note">'+note+'</span>';
+  items.forEach(it=>{
+    const [date, era, title, slug, teaser] = it;
+    const col = ERAHEX[era] || ERAHEX.ctx;
+    h += '<div class="pev"><span class="dot" style="background:'+col+'"></span>'+
+         '<span class="date">'+date+'</span> — '+
+         '<a href="index.html#'+slug+'">'+title+'</a>'+
+         '<span class="tz">'+teaser+'</span></div>';
+  });
+  return h + '</div>';
+}
+
+const worldGroup = [], keralaGroup = [];
+LOCS.forEach(L0=>{
+  const [name, lat, lng, scope, note, items] = L0;
+  const firstEra = items[0][1];
+  const col = ERAHEX[firstEra] || ERAHEX.ctx;
+  const m = L.circleMarker([lat,lng], {
+    radius: scope==='kerala' ? 7 : 8,
+    color:'#0b0d11', weight:1.5, fillColor:col, fillOpacity:.92
+  }).bindPopup(popupHTML(name, note, items), {maxWidth:320, minWidth:220});
+  m.addTo(map);
+  worldGroup.push([lat,lng]);
+  if(scope==='kerala') keralaGroup.push([lat,lng]);
+});
+
+const worldBounds  = L.latLngBounds(worldGroup).pad(0.08);
+const keralaBounds = L.latLngBounds(keralaGroup).pad(0.12);
+function showWorld(){ map.fitBounds(worldBounds); setActive('viewWorld'); }
+function showKerala(){ map.fitBounds(keralaBounds); setActive('viewKerala'); }
+function setActive(id){ ['viewWorld','viewKerala'].forEach(x=>document.getElementById(x).classList.toggle('active', x===id)); }
+document.getElementById('viewWorld').addEventListener('click', showWorld);
+document.getElementById('viewKerala').addEventListener('click', showKerala);
+
+showWorld();
+</script>
+</body>
+</html>
