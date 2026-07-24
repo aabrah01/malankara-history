@@ -95,6 +95,7 @@
   showing where each church began, when, and why it separated. Colors indicate the liturgical rite each branch uses. Click any node for the full story of its split.</p>
   <a class="navlink" href="index.html">← Back to the interactive timeline</a>
   <a class="navlink" href="malankara_church_map.html">Map of events →</a>
+  <a class="navlink" href="#" id="dlText">⭳ Download as text</a>
 </header>
 
 <div class="legend">
@@ -337,8 +338,35 @@ const DATA = {
   ]}
 };
 
+// Download a plain-text version of the lineage
+const ORDER=['root','diamper','pazhayakur','syromalabar','chaldean','puthenkur','thozhiyur','csi','marthoma','steci','mosc','jacobite','syromalankara'];
+function downloadText(filename, text){
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function buildLineageText(){
+  let out='LINEAGE OF THE ST. THOMAS CHRISTIAN CHURCHES\n(plain-text export)\n\n'+
+    'Follows the Wikipedia chart “Branches & Denominations of Saint Thomas Christians”, with split narratives drawn from the Divine Ascent podcast and per-church Wikipedia articles.\n'+
+    'Live interactive version: https://aabrah01.github.io/malankara-history/malankara_church_lineage.html\n';
+  ORDER.forEach(id=>{ const d=DATA[id]; if(!d) return;
+    out+='\n\n============================================================\n'+d.name+'\n============================================================\n';
+    out+='When: '+d.yr+'\nLiturgical rite: '+d.rite+'\nCommunion: '+d.comm+'\n';
+    if(d.members) out+='Members: '+d.members+'\n';
+    out+='\nWhy this branch formed:\n'+d.why+'\n';
+    out+='\nRite & legacy:\n'+d.extra+'\n';
+    if(d.diff) out+='\nLiturgy & beliefs vs. the other churches:\n'+d.diff+'\n';
+    out+='\nSources:\n';
+    d.sources.forEach(s=> out+='  - '+s.label+(s.url?'  '+s.url:'')+'\n');
+  });
+  return out;
+}
+
 const detail = document.getElementById('detail');
 const panel = document.getElementById('panelInner');
+document.getElementById('dlText').addEventListener('click', ev=>{ ev.preventDefault(); downloadText('st-thomas-christian-lineage.txt', buildLineageText()); });
 let activeNode = null;
 
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}

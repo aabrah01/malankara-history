@@ -77,7 +77,7 @@
 <header>
   <h1>The Malankara Orthodox Syrian Church</h1>
   <p class="sub">An interactive timeline of nearly 2,000 years of St. Thomas Christianity in Kerala, India — compiled from the <em>Divine Ascent</em> podcast series “Indian Church History” (Parts 1–4, hosted by Vivek Mathew with Rev. Fr. Christopher Mathew) and cross-checked against published sources. Click any event to expand its details and sources.</p>
-  <p class="sub" style="margin-top:10px;"><a href="malankara_church_lineage.html" style="display:inline-block;background:var(--card);border:1px solid var(--line);padding:7px 16px;border-radius:20px;text-decoration:none;margin:0 4px;">Church lineage &amp; branches →</a><a href="malankara_church_map.html" style="display:inline-block;background:var(--card);border:1px solid var(--line);padding:7px 16px;border-radius:20px;text-decoration:none;margin:0 4px;">Map of events →</a></p>
+  <p class="sub" style="margin-top:10px;"><a href="malankara_church_lineage.html" style="display:inline-block;background:var(--card);border:1px solid var(--line);padding:7px 16px;border-radius:20px;text-decoration:none;margin:0 4px;">Church lineage &amp; branches →</a><a href="malankara_church_map.html" style="display:inline-block;background:var(--card);border:1px solid var(--line);padding:7px 16px;border-radius:20px;text-decoration:none;margin:0 4px;">Map of events →</a><a href="#" id="dlText" style="display:inline-block;background:var(--card);border:1px solid var(--line);padding:7px 16px;border-radius:20px;text-decoration:none;margin:0 4px;">⭳ Download as text</a></p>
 </header>
 
 <div class="controls" id="eraFilters">
@@ -496,6 +496,34 @@ document.getElementById('toggleAll').addEventListener('click', e=>{
   document.querySelectorAll('.event').forEach(d=>d.classList.toggle('open', allOpen));
   e.target.textContent = allOpen?'Collapse all':'Expand all';
 });
+
+// Download a plain-text version of the timeline
+function downloadText(filename, text){
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function buildTimelineText(){
+  const evs=EVENTS.slice().sort((a,b)=>a.sort-b.sort);
+  let out='THE MALANKARA ORTHODOX SYRIAN CHURCH — INTERACTIVE TIMELINE\n(plain-text export)\n\n'+
+    'Compiled from the Divine Ascent podcast “Indian Church History” (Parts 1–4, hosted by Vivek Mathew with Rev. Fr. Christopher Mathew) and cross-checked against published sources.\n'+
+    'Live interactive version: https://aabrah01.github.io/malankara-history/\n'+
+    'Total events: '+evs.length+'\n';
+  let lastEra=null;
+  evs.forEach(e=>{
+    if(e.era!==lastEra){ lastEra=e.era;
+      out+='\n\n============================================================\n'+ERAS[e.era].name.toUpperCase()+'\n'+ERAS[e.era].range+'\n============================================================\n';
+    }
+    out+='\n['+e.year+'] '+e.title+'\n'+e.teaser+'\n\n'+e.details+'\n';
+    if(e.note) out+='\nNote: '+e.note+'\n';
+    out+='Sources:\n';
+    e.sources.forEach(s=> out+='  - '+s.label+(s.url?'  '+s.url:'')+'\n');
+  });
+  return out;
+}
+document.getElementById('dlText').addEventListener('click', ev=>{ ev.preventDefault(); downloadText('malankara-orthodox-timeline.txt', buildTimelineText()); });
 
 // Deep-linking: open and scroll to an event when arriving with a #ev-... hash (e.g. from the map)
 function openFromHash(){
