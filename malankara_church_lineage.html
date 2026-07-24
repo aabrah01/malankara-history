@@ -92,7 +92,7 @@
   <h1>Lineage of the St. Thomas Christian Churches</h1>
   <p class="sub">One apostolic community — many branches. This family tree follows the Wikipedia chart
   <a href="https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church#/media/File:Branches_%26_Denominations_of_Saint_Thomas_Christians.svg" target="_blank" rel="noopener">“Branches &amp; Denominations of Saint Thomas Christians”</a>,
-  showing where each church began, when, and why it separated. Colors indicate the liturgical rite each branch uses. Click any node for the full story of its split.</p>
+  showing where each church began, when, and why it separated. Colors indicate the liturgical rite each branch uses. Click any node for the full story of its split. One departure from that chart: the Mar Thoma and Syro-Malankara churches are grouped here as offshoots of the Malankara Orthodox Syrian Church, which understands itself as the continuing Malankara Church both groups left.</p>
   <a class="navlink" href="index.html">← Back to the interactive timeline</a>
   <a class="navlink" href="malankara_church_map.html">Map of events →</a>
   <a class="navlink" href="#" id="dlText">↓ Download as text</a>
@@ -162,15 +162,19 @@
       <ul>
        <li><div class="node rt-west" data-id="thozhiyur"><div class="yr">1772</div><div class="nm">Malabar Independent Syrian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Independent (Thozhiyur)</div></div></li>
        <li><div class="node rt-reform" data-id="csi"><div class="yr">1836 / 1947</div><div class="nm">CSI Syrian Christians</div><div class="rite">Anglican / Reformed liturgy</div><div class="badge">Church of South India</div></div></li>
+       <li><div class="node rt-west" data-id="jacobite"><div class="yr">1912 / 1975</div><div class="nm">Jacobite Syrian Christian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Under Patriarch of Antioch</div></div></li>
        <li>
-        <div class="node rt-reform" data-id="marthoma"><div class="yr">1876 / 1889</div><div class="nm">Mar Thoma Syrian Church</div><div class="rite">Reformed West Syriac Rite</div><div class="badge">Reformed Oriental</div></div>
+        <div class="node rt-west star" data-id="mosc"><div class="yr">1912 / 1934</div><div class="nm">Malankara Orthodox Syrian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Oriental Orthodox · Autocephalous</div></div>
         <ul>
-         <li><div class="node rt-reform" data-id="steci"><div class="yr">1961</div><div class="nm">St. Thomas Evangelical Church</div><div class="rite">Evangelical / Reformed</div><div class="badge">Split from Mar Thoma</div></div></li>
+         <li>
+          <div class="node rt-reform" data-id="marthoma"><div class="yr">1876 / 1889</div><div class="nm">Mar Thoma Syrian Church</div><div class="rite">Reformed West Syriac Rite</div><div class="badge">Reformed Oriental</div></div>
+          <ul>
+           <li><div class="node rt-reform" data-id="steci"><div class="yr">1961</div><div class="nm">St. Thomas Evangelical Church</div><div class="rite">Evangelical / Reformed</div><div class="badge">Split from Mar Thoma</div></div></li>
+          </ul>
+         </li>
+         <li><div class="node rt-west" data-id="syromalankara"><div class="yr">1930</div><div class="nm">Syro-Malankara Catholic Church</div><div class="rite">West Syriac Rite</div><div class="badge">Eastern Catholic</div></div></li>
         </ul>
        </li>
-       <li><div class="node rt-west star" data-id="mosc"><div class="yr">1912 / 1934</div><div class="nm">Malankara Orthodox Syrian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Oriental Orthodox · Autocephalous</div></div></li>
-       <li><div class="node rt-west" data-id="jacobite"><div class="yr">1912 / 1975</div><div class="nm">Jacobite Syrian Christian Church</div><div class="rite">West Syriac Rite</div><div class="badge">Under Patriarch of Antioch</div></div></li>
-       <li><div class="node rt-west" data-id="syromalankara"><div class="yr">1930</div><div class="nm">Syro-Malankara Catholic Church</div><div class="rite">West Syriac Rite</div><div class="badge">Eastern Catholic</div></div></li>
       </ul>
      </li>
     </ul>
@@ -183,7 +187,7 @@
 <div id="detail"><div class="panel" id="panelInner"></div></div>
 
 <footer>
-  <p><b style="color:var(--text)">Sources for this page.</b> Tree structure: Wikipedia,
+  <p><b style="color:var(--text)">Sources for this page.</b> Tree structure adapted from Wikipedia,
   <a href="https://en.wikipedia.org/wiki/Malankara_Orthodox_Syrian_Church#/media/File:Branches_%26_Denominations_of_Saint_Thomas_Christians.svg" target="_blank" rel="noopener">Branches &amp; Denominations of Saint Thomas Christians (chart)</a> and the article
   <a href="https://en.wikipedia.org/wiki/Saint_Thomas_Christians" target="_blank" rel="noopener">Saint Thomas Christians</a> (sections “Colonial era” and “Divisions”). Split narratives additionally draw on the <em>Divine Ascent</em> podcast, “Indian Church History” —
   <a href="https://www.youtube.com/watch?v=I5yBaZ8LV5g">Part 1</a>,
@@ -285,7 +289,7 @@ const DATA = {
   members:"≈1 million reported worldwide; 405,089 in Kerala per the 2011 census",
   why:"Why it split: Abraham Malpan, a Syriac teacher at the seminary who embraced CMS Reformed theology, revised the liturgy — removing prayers to the saints and for the departed — and had his nephew consecrated by the Patriarch of Antioch as Mathews Mar Athanasius (returned 1843), who won government recognition as Malankara Metropolitan. Three decades of struggle between this Reform Party and the Conservative Party ended when Patriarch Peter III/IV came to India and the Synod of Mulanthuruthy (1876) repudiated the reforms. The reformers under Thomas Mar Athanasius lost the Seminary Case in the Royal Court of Travancore (1889), left the old churches, and organized as the Mar Thoma Syrian Church.",
   extra:"Liturgically it is a middle path: the West Syriac Qurbana structure retained, in Malayalam, but purged along Protestant lines — the first vernacular liturgy among the St. Thomas Christians.",
-  diff:"A deliberate hybrid. It keeps the outward inheritance of the West Syriac rite — the structure of the St. James Qurbana, vestments, the church year, episcopal succession, married clergy — but in Abraham Malpan's reformed text: prayers to the saints and for the departed removed, no veneration of icons or relics, the Eucharist not offered as a propitiatory sacrifice, and Scripture given controlling authority over tradition. So against the Orthodox and Jacobite churches the difference is doctrinal (Reformed theology in an Oriental frame); against CSI it is liturgical (the Syriac rite retained); it is in full communion with the Anglican Communion, which no Orthodox branch is.",
+  diff:"A deliberate hybrid. It keeps the outward inheritance of the West Syriac rite — the structure of the St. James Qurbana, vestments, the church year, episcopal succession, married clergy — but in Abraham Malpan's reformed text: prayers to the saints and for the departed removed, no veneration of icons or relics, the Eucharist not offered as a propitiatory sacrifice, and Scripture given controlling authority over tradition. So against the Orthodox and Jacobite churches the difference is doctrinal (Reformed theology in an Oriental frame); against CSI it is liturgical (the Syriac rite retained); it is in full communion with the Anglican Communion, which no Orthodox branch is. A note on placement: the reform party separated in 1889, before the Orthodox–Jacobite division of 1912, so strictly it branched from the then-undivided Malankara Church — which the Orthodox Church continues, and under which it is grouped here.",
   sources:[
    {label:"Divine Ascent, Part 3 — “Marthoma Church Formation” (11:38)", url:"https://www.youtube.com/watch?v=gZ3i6jW0KNA&t=698s"},
     {label:"Divine Ascent, Part 4 — “Addressing Marthoma Reformation Comments” (1:55)", url:"https://www.youtube.com/watch?v=qNm8JeZkcoc&t=115s"},
@@ -306,7 +310,7 @@ const DATA = {
   name:"Malankara Orthodox Syrian Church (Indian Orthodox Church)", yr:"Catholicate established 1912; Constitution 1934", rite:"West Syriac Rite", comm:"Oriental Orthodox; autocephalous, headed by the Catholicos of the East & Malankara Metropolitan",
   members:"≈2.5 million reported by the church (30 dioceses); ≈0.5 million counted in Kerala per the 2011 census",
   why:"Why it split: after Patriarch Abdullah II demanded registered letters of submission granting him spiritual and temporal authority, Malankara Metropolitan Vattasseril Geevarghese Mar Dionysius VI refused and was excommunicated (1911). His party invited the senior (deposed-by-the-Ottomans but never canonically degraded) Patriarch Abdul Masih II, who in 1912 consecrated Baselios Paulose I as Catholicos of the East on the throne of St. Thomas — restoring an ancient office and giving the Indian church the power to consecrate its own bishops and Holy Mooron. The 1934 Constitution then unified governance under the Catholicos-and-Malankara-Metropolitan with an elected association.",
-  extra:"India's Supreme Court upheld this constitutional order in 1958 (leading to reconciliation, and Patriarch Yakub III's consecration of Catholicos Augen I in 1964) and again in 1995 and 2017. This is the church whose full story the companion timeline follows. ★",
+  extra:"India's Supreme Court upheld this constitutional order in 1958 (leading to reconciliation, and Patriarch Yakub III's consecration of Catholicos Augen I in 1964) and again in 1995 and 2017. This is the church whose full story the companion timeline follows. ★ In this tree the Mar Thoma and Syro-Malankara churches are shown as offshoots of this line: the Orthodox Church understands itself as the continuing Malankara Church that both groups departed from — the reformers in 1889 and Mar Ivanios's group in 1930.",
   diff:"West Syriac Liturgy of St. James in Syriac and Malayalam; Oriental Orthodox (Miaphysite) faith: St. Mary honored as Theotokos, the saints invoked, the departed prayed for, leavened bread, communion in both kinds given together, infants fully initiated at baptism, married parish priests with monastic bishops. Doctrinally and liturgically identical to the Jacobite church — the sole difference is headship: an autocephalous Catholicos of the East in Kerala, commemorated in its liturgy, governing under the 1934 Constitution, versus the Jacobites' Patriarch of Antioch. Against the Catholic branches it rejects papal supremacy and Latin dogmas; against the Reformed branches it keeps everything they removed.",
   sources:[
    {label:"Divine Ascent, Part 4 — “Establishment of Catholicos of the East in India” (29:51)", url:"https://www.youtube.com/watch?v=qNm8JeZkcoc&t=1791s"},
@@ -339,7 +343,7 @@ const DATA = {
 };
 
 // Download a plain-text version of the lineage
-const ORDER=['root','diamper','pazhayakur','syromalabar','chaldean','puthenkur','thozhiyur','csi','marthoma','steci','mosc','jacobite','syromalankara'];
+const ORDER=['root','diamper','pazhayakur','syromalabar','chaldean','puthenkur','thozhiyur','csi','jacobite','mosc','marthoma','steci','syromalankara'];
 function downloadText(filename, text){
   const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
   const url=URL.createObjectURL(blob);
